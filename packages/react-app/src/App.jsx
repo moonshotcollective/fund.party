@@ -284,7 +284,7 @@ function App(props) {
             */}
 
           <Contract
-            name="YourContract"
+            name="PGDeployer"
             price={price}
             signer={userSigner}
             provider={localProvider}
