@@ -36,14 +36,6 @@ contract PGDeployer is Ownable {
         emit pgerc20Deployed(address(token));
     }
 
-       /*  uint256 _maxSupply,
-        uint256 _curve,
-        uint256 _basePrice,
-        string memory name,
-        string memory symbol,
-        string memory base,
-        string memory _contractURI */
-
     function deployERC721(
         uint256 maxSupply,
         uint256 curve,
