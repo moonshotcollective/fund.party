@@ -19,7 +19,7 @@ contract PGERC721 is ERC721, Ownable {
     string[] private uris;
 
     uint256 private _vMaxSupply;
-    string private _base;
+    string private _userURI;
 
     constructor(
         uint256 _maxSupply,
@@ -35,13 +35,13 @@ contract PGERC721 is ERC721, Ownable {
         _vMaxSupply = _maxSupply;
         _vCurve = _curve;
         _vPrice = _basePrice;
-        _base = base;
+        _userURI = base;
         contractURI = _contractURI;
         uris = _uris;
     }
 
     function _baseURI() internal view override returns (string memory) {
-        return _base;
+        return _userURI;
     }
 
     function mintItem() public payable returns (uint256) {
@@ -68,5 +68,57 @@ contract PGERC721 is ERC721, Ownable {
 
         return id;
     }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+        require(tokenId <= _vMaxSupply, "Nonexistent token");
+        
+        return
+            bytes(_userURI).length > 0
+                ? string(abi.encodePacked(_userURI, uris[tokenId-1]))
+                : "";
+    }
+
+     /**
+     * @notice Returns current floor value
+     */
+    function floor() public view returns (uint256) {
+        if (currentSupply == 0) {
+            return address(this).balance;
+        }
+        return address(this).balance / currentSupply;
+    }
+
+    function currentToken() public view returns (uint256) {
+        return _tokenIds.current();
+    }
+
+    /**
+     * @notice Executes a sale and updates the floor price
+     * @param _id nft id
+     */
+    function redeem(uint256 _id) external {
+        require(ownerOf(_id) == msg.sender, "Not Owner");
+        uint256 currentFloor = floor();
+        require(currentFloor > 0, "sale cannot be made until floor is established");
+        currentSupply--;
+        super._burn(_id);
+        (bool success, ) = msg.sender.call{value: currentFloor}("");
+        require(success, "sending floor price failed");
+    }
+
+    /**
+     * @notice Fallback
+     */
+    receive() external payable {}
 
 }
