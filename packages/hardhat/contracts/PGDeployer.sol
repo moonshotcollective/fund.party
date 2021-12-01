@@ -36,25 +36,36 @@ contract PGDeployer is Ownable {
         emit pgerc20Deployed(address(token));
     }
 
-    function deployERC721(
-        address tokenOwner,
+       /*  uint256 _maxSupply,
+        uint256 _curve,
+        uint256 _basePrice,
         string memory name,
         string memory symbol,
+        string memory base,
+        string memory _contractURI */
+
+    function deployERC721(
         uint256 maxSupply,
+        uint256 curve,
+        uint256 basePrice,
+        string memory name,
+        string memory symbol,
         string memory baseURI,
         string memory contractURI
     ) public {
         // deploy new token
         PGERC721 token = new PGERC721(
+            maxSupply,
+            curve,
+            basePrice,
             name,
             symbol,
-            maxSupply,
             baseURI,
             contractURI
         );
 
         // transfer token to owner
-        token.transferOwnership(tokenOwner);
+        token.transferOwnership(msg.sender);
 
         // emit event
         emit pgerc721Deployed(address(token), maxSupply);
