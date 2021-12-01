@@ -5,13 +5,17 @@ import "./PGERC20.sol";
 import "./PGERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
 contract PGDeployer is Ownable {
     event pgerc20Deployed(address indexed token);
-    event pgerc721Deployed(address indexed token, uint256 totalSupply);
+    event pgerc721Deployed(address indexed token, uint256 deployId, uint256 totalSupply);
+
+    using Counters for Counters.Counter;
+    Counters.Counter private _nftDeployCount;
 
     function deployERC20(
         address tokenOwner,
@@ -59,7 +63,11 @@ contract PGDeployer is Ownable {
         // transfer token to owner
         token.transferOwnership(msg.sender);
 
+        // track deploys by count
+        _nftDeployCount.increment();
+        uint256 deployId = _nftDeployCount.current();
+
         // emit event
-        emit pgerc721Deployed(address(token), maxSupply);
+        emit pgerc721Deployed(address(token), deployId, maxSupply);
     }
 }
