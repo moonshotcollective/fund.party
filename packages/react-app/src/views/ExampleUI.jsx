@@ -17,12 +17,45 @@ export default function ExampleUI({
 }) {
   const [newPurpose, setNewPurpose] = useState("loading...");
 
+  const NFT = useExternalContractLoader(localProvider, nft, FLOOR_ABI);
+
   return (
     <div>
       {/*
         ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
       */}
       <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
+      <Button
+            //disabled={!tokenAddress || !amountRequired || allowance.toString() == "0"}
+            onClick={() => {
+                  tx(
+                    writeContracts.NFTDeployer.deploy(
+                      "f",
+                      ["f"],
+                      "f",
+                      "ff",
+                      "9",
+                    ),
+                  )
+                    .then(result => {
+                      console.log(result);
+                      result.wait().then(receipt => {
+                        console.log(receipt);
+                        history.push(`/view/${receipt.events[0].args._address}`);
+                      })
+                    .catch(err => {
+                      //handle error here
+                      console.log(err);
+                    });
+                })
+                .catch(err => {
+                  //handle error here
+                  console.log(err);
+                });
+            }}
+          >
+            Deploy NFT
+          </Button>
         <h2>Example UI:</h2>
         <h4>purpose: {purpose}</h4>
         <Divider />
@@ -155,8 +188,8 @@ export default function ExampleUI({
       */}
       <Events
         contracts={readContracts}
-        contractName="YourContract"
-        eventName="SetPurpose"
+        contractName="PGDeployer"
+        eventName="Purpose"
         localProvider={localProvider}
         mainnetProvider={mainnetProvider}
         startBlock={1}
