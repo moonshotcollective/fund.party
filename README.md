@@ -1,1 +1,1 @@
-# PublicGoods.Party
+# Fund.Party
