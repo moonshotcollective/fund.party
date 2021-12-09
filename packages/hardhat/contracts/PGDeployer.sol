@@ -10,6 +10,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
 contract PGDeployer is Ownable {
+    enum pgType {
+        erc20,
+        erc721
+    }
+
+    event pgDeployed(
+        address indexed token,
+        address indexed creator,
+        pgType indexed pgtype,
+        uint256 supply
+    );
     event pgerc20Deployed(address indexed token);
     event pgerc721Deployed(address indexed token, uint256 totalSupply);
 
@@ -17,30 +28,24 @@ contract PGDeployer is Ownable {
         address tokenOwner,
         string memory name,
         string memory symbol,
-        uint256 initialSupply,
+        uint256 supply,
         uint8 decimal
     ) public {
         // deploy new token
-        PGERC20 token = new PGERC20(
-            tokenOwner,
-            name,
-            symbol,
-            initialSupply,
-            decimal
-        );
+        PGERC20 token = new PGERC20(tokenOwner, name, symbol, supply, decimal);
 
         // transfer token to owner
         token.transferOwnership(tokenOwner);
 
         // emit event
-        emit pgerc20Deployed(address(token));
+        emit pgDeployed(address(token), msg.sender, pgType.erc20, supply);
     }
 
     function deployERC721(
         address tokenOwner,
         string memory name,
         string memory symbol,
-        uint256 maxSupply,
+        uint256 supply,
         string memory baseURI,
         string memory contractURI
     ) public {
@@ -48,7 +53,7 @@ contract PGDeployer is Ownable {
         PGERC721 token = new PGERC721(
             name,
             symbol,
-            maxSupply,
+            supply,
             baseURI,
             contractURI
         );
@@ -57,6 +62,6 @@ contract PGDeployer is Ownable {
         token.transferOwnership(tokenOwner);
 
         // emit event
-        emit pgerc721Deployed(address(token), maxSupply);
+        emit pgDeployed(address(token), msg.sender, pgType.erc721, supply);
     }
 }
