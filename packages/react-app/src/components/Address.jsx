@@ -74,7 +74,7 @@ export default function Address(props) {
   }
 
   return (
-    <span>
+    <div className="flex items-center flex-row">
       <span style={{ verticalAlign: "middle" }}>
         <Blockies seed={address.toLowerCase()} size={8} scale={props.fontSize ? props.fontSize / 7 : 4} />
       </span>
@@ -103,6 +103,6 @@ export default function Address(props) {
           </Text>
         )}
       </span>
-    </span>
+    </div>
   );
 }

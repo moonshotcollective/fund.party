@@ -54,11 +54,11 @@ export default function Account({
   const { currentTheme } = useThemeSwitcher();
 
   return (
-    <div>
+    <div className="flex flex-1 items-center flex-row">
       {minimized ? (
         ""
       ) : (
-        <span>
+        <div className="flex flex-row items-center">
           {address ? (
             <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
           ) : (
@@ -73,7 +73,7 @@ export default function Account({
             price={price}
             color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
           />
-        </span>
+        </div>
       )}
       {web3Modal &&
         (web3Modal?.cachedProvider ? (
