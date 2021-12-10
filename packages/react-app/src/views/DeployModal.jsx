@@ -16,13 +16,14 @@ const steps = [
 function DeployModal({ tx, writeContracts, address, show, onCancel }) {
   const [activeStep, setActiveStep] = useState(0);
   const [pgType, setPgType] = useState(0);
-  const [deployed, setDeployed] = useState(false);
+  const [pgData, setPgData] = useState({});
+  const [isDeploying, setIsDeploying] = useState(false);
 
   const reset = () => {
     onCancel && onCancel();
     setActiveStep(0);
-    setPgType({});
-    setDeployed(false);
+    setPgType(0);
+    setPgData({});
   };
 
   const onNextStep = () => {
@@ -30,7 +31,9 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
 
     if (nextStep < steps.length) {
       setActiveStep(nextStep);
-    } else {
+    }
+
+    if (isDeploying) {
       reset();
     }
   };
@@ -49,42 +52,6 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
     if (activeStep === steps.length - 1) {
       reset();
     }
-  };
-
-  const handleDeployment = async tokenData => {
-    onNextStep();
-    let method = "deployERC20";
-    const { name, symbol, totalSupply } = tokenData;
-    let extradata = ["18"];
-    let calldata = [address, name, symbol, totalSupply];
-
-    if (pgType === 2) {
-      method = "deployERC721";
-      extradata = [tokenData.baseURI, ""];
-    }
-
-    calldata = [...calldata, ...extradata];
-
-    const result = tx(writeContracts.PGDeployer[method](...calldata), update => {
-      console.log("📡 Transaction Update:", update);
-      if (update && (update.status === "confirmed" || update.status === 1)) {
-        setDeployed(true);
-        console.log(" 🍾 Transaction " + update.hash + " finished!");
-        console.log(
-          " ⛽️ " +
-            update.gasUsed +
-            "/" +
-            (update.gasLimit || update.gas) +
-            " @ " +
-            parseFloat(update.gasPrice) / 1000000000 +
-            " gwei",
-        );
-      }
-    });
-    console.log("awaiting metamask/web3 confirm result...", result);
-    console.log(await result);
-
-    // TODO: redirect to project homepage
   };
 
   const ActiveStepView = steps[activeStep].Component;
@@ -111,12 +78,18 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
           </Steps>
         </div>
         <ActiveStepView
+          tx={tx}
+          reset={reset}
           pgType={pgType}
-          deployed={deployed}
+          pgData={pgData}
+          address={address}
           setPgType={setPgType}
+          setPgData={setPgData}
           onNextStep={onNextStep}
+          isDeploying={isDeploying}
+          setIsDeploying={setIsDeploying}
           onPreviousStep={onPreviousStep}
-          handleDeployment={handleDeployment}
+          writeContracts={writeContracts}
         />
       </div>
     </Modal>
