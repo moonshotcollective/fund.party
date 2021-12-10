@@ -1,22 +1,20 @@
 import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 
-function Details({ onPreviousStep, onNextStep, pgType, handleDeployment, ...props }) {
+function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handleDeployment, ...props }) {
   const [form] = Form.useForm();
-  const [deploying, setDeploying] = useState(false);
   const [requiredMark, setRequiredMarkType] = useState("optional");
 
   const onRequiredTypeChange = ({ requiredMarkValue }) => {
     setRequiredMarkType(requiredMarkValue);
   };
 
-  const validateAndDeploy = async () => {
+  const validateAndContinue = async () => {
     const values = form.getFieldsValue();
     // TODO: run validation and then continue
 
-    setDeploying(true);
-    await handleDeployment(values);
-    setDeploying(false);
+    setPgData(values);
+    onNextStep();
   };
 
   const isERC20 = pgType === 1;
@@ -37,57 +35,37 @@ function Details({ onPreviousStep, onNextStep, pgType, handleDeployment, ...prop
           layout="vertical"
           initialValues={{
             requiredMarkValue: requiredMark,
+            name: pgData.name,
+            symbol: pgData.symbol,
+            totalSupply: pgData.totalSupply,
+            decimal: pgData.decimal || 18,
+            baseURI: pgData.baseURI,
+            inflation: pgData.inflation,
           }}
           size="large"
           onValuesChange={onRequiredTypeChange}
           requiredMark={requiredMark}
         >
-          <Form.Item
-            disabled={deploying}
-            label="Project Name"
-            name="name"
-            required
-            tooltip="This is a required field"
-            className="w-full"
-          >
+          <Form.Item label="Project Name" name="name" required tooltip="This is a required field" className="w-full">
             <Input placeholder="Simple Public Goods Project" />
           </Form.Item>
-          <Form.Item
-            disabled={deploying}
-            label="Symbol"
-            name="symbol"
-            tooltip="Tooltip with customize icon"
-            className="w-full"
-          >
+          <Form.Item label="Symbol" name="symbol" tooltip="Tooltip with customize icon" className="w-full">
             <Input placeholder="SPGP" />
           </Form.Item>
-          <Form.Item
-            disabled={deploying}
-            label="Total supply"
-            name="totalSupply"
-            required
-            tooltip="Total supply info"
-            className="w-full"
-          >
+          <Form.Item label="Total supply" name="totalSupply" required tooltip="Total supply info" className="w-full">
             <Input type="number" placeholder={isERC20 ? "100000000" : "10000"} />
           </Form.Item>
 
           {isERC20 ? (
-            "ERC-20 Stuff"
+            <Form.Item label="Token Decimal" name="decimal" required tooltip="Decimal Info" className="w-full">
+              <Input type="number" placeholder="18" />
+            </Form.Item>
           ) : (
             <>
-              <Form.Item
-                disabled={deploying}
-                label="Base URI"
-                name="baseURI"
-                required
-                tooltip="Base URI info"
-                className="w-full"
-              >
+              <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
                 <Input placeholder="https://tokens-base-uri..." />
               </Form.Item>
               <Form.Item
-                disabled={deploying}
                 label="Start mint price"
                 name="startPrice"
                 required
@@ -97,7 +75,6 @@ function Details({ onPreviousStep, onNextStep, pgType, handleDeployment, ...prop
                 <Input type="number" placeholder="0.03" addonAfter={<span>Ξ</span>} />
               </Form.Item>
               <Form.Item
-                disabled={deploying}
                 label="Price inflation rate"
                 name="inflation"
                 required
@@ -111,11 +88,11 @@ function Details({ onPreviousStep, onNextStep, pgType, handleDeployment, ...prop
         </Form>
 
         <div className="mt-20 flex flex-1 items-center justify-center flex-row">
-          <Button size="large" disabled={deploying} onClick={onPreviousStep}>
+          <Button size="large" onClick={onPreviousStep}>
             Go Back
           </Button>
           <div className="w-4" />
-          <Button type="primary" size="large" loading={deploying} disabled={deploying} onClick={validateAndDeploy}>
+          <Button type="primary" size="large" onClick={validateAndContinue}>
             Confirm token details
           </Button>
         </div>

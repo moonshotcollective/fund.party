@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PGERC20 is ERC20, Ownable {
-    uint8 private _decimalOverride = 16;
+    uint8 private _decimalOverride = 18;
 
     constructor(
         address admin,
