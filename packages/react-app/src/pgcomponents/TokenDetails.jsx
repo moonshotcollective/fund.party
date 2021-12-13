@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
+import { default as Uploader } from "./Uploader";
 
 function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handleDeployment, ...props }) {
   const [form] = Form.useForm();
@@ -62,6 +63,7 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
             </Form.Item>
           ) : (
             <>
+              <Uploader />
               <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
                 <Input placeholder="https://tokens-base-uri..." />
               </Form.Item>
