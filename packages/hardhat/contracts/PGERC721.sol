@@ -12,6 +12,7 @@ contract PGERC721 is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    address public admin;
     uint256 public currentSupply = 0;
     uint256 public _vCurve;
     uint256 public _vPrice;
@@ -22,6 +23,7 @@ contract PGERC721 is ERC721, Ownable {
     string private _userURI;
 
     constructor(
+        address _admin,
         uint256 _maxSupply,
         uint256 _curve,
         uint256 _basePrice,
@@ -32,6 +34,7 @@ contract PGERC721 is ERC721, Ownable {
         string[] memory _uris
     ) ERC721(name, symbol) {
         //
+        admin = _admin;
         _vMaxSupply = _maxSupply;
         _vCurve = _curve;
         _vPrice = _basePrice;
