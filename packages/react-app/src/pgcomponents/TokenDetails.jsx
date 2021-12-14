@@ -57,7 +57,7 @@ function Details({
       transition: "border .24s ease-in-out",
     };
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const { getRootProps, getInputProps, open } = useDropzone({
       accept: ".json",
       maxFiles: 10000,
       onDrop: acceptedFiles => {
@@ -82,9 +82,13 @@ function Details({
     );
 
     return (
-      <div {...getRootProps()}>
-        <input {...getInputProps()} />
-        {isDragActive ? <p>Drop the files here ...</p> : <p>Drag 'n' drop some files here, or click to select files</p>}
+      <div {...getRootProps({ className: "dropzone" })}>
+        <div {...getRootProps()}>
+          <input {...getInputProps()} />
+          <Button type="button" onClick={open}>
+            Open File Explorer
+          </Button>
+        </div>
       </div>
     );
   }
