@@ -63,6 +63,9 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
             </Form.Item>
           ) : (
             <>
+              <div className="text-center">
+                <h1 className="text-2xl font-medium">Upload jsons</h1>
+              </div>
               <Uploader />
               <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
                 <Input placeholder="https://tokens-base-uri..." />

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Button, Form, Input } from "antd";
 import { NFTStorage } from "nft.storage";
 import { useDropzone } from "react-dropzone";
 
 function Uploader() {
   const [files, setFiles] = useState([]);
+  const [CID, setCID] = useState("");
 
   const client = new NFTStorage({
     token:
@@ -40,7 +42,7 @@ function Uploader() {
       <section className="container">
         <div {...getRootProps({ className: "dropzone" })}>
           <input {...getInputProps()} />
-          <p>Click here to upload jsons</p>
+          <p>Click to upload .jsons</p>
         </div>
       </section>
     );
@@ -50,6 +52,7 @@ function Uploader() {
 
   async function pintoStorage(file) {
     var cid = await client.storeDirectory(file);
+    setCID(cid);
     console.log(cid);
 
     //let filenames = file.path
@@ -67,6 +70,8 @@ function Uploader() {
         {files.map(file => (
           <div>{file.path} </div>
         ))}
+        <br />
+        CID :{CID}
       </div>
     </div>
   );
