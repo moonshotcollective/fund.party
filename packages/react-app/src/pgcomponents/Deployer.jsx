@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { Button } from "antd";
 
-function Details({ tx, reset, pgType, pgData, address, isDeploying, writeContracts, onPreviousStep, setIsDeploying }) {
+function Details({
+  tx,
+  reset,
+  pgType,
+  pgData,
+  address,
+  isDeploying,
+  writeContracts,
+  onPreviousStep,
+  setIsDeploying,
+  uCID,
+}) {
   console.log(pgData);
 
   const handleDeployment = async () => {
@@ -78,12 +89,12 @@ function Details({ tx, reset, pgType, pgData, address, isDeploying, writeContrac
             <div>{pgData.inflation}</div>
           </div>
         )}
-        {pgData.baseURI && (
+        {uCID && (
           <div className="flex flex-1 flex-row mb-2">
             <div className="mr-2 flex flex-nowrap">Token baseURI:</div>
             <div className="truncate max-w-sm">
-              <a href={pgData.baseURI} target="_blank">
-                {pgData.baseURI}
+              <a href={uCID} target="_blank">
+                {uCID}
               </a>
             </div>
           </div>
