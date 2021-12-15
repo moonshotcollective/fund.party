@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PGERC721 is ERC721Enumerable, Ownable {
-    address payable public constant gitcoin =
+    address payable public constant recipient =
         payable(0xde21F729137C5Af1b01d73aF1dC21eFfa2B8a0d6);
 
     using Counters for Counters.Counter;
@@ -50,22 +50,15 @@ contract PGERC721 is ERC721Enumerable, Ownable {
         require(msg.value >= price, "NOT ENOUGH");
 
         price = (price * curve) / 1000;
-
-        require(msg.value >= price, "Tx value less than mint price");
-
-        require(
-            _tokenIds.current() < limit,
-            "Minting complete, please check secondary markets"
-        );
+        currentSupply++;
 
         _tokenIds.increment();
-        currentSupply++;
-        uint256 id = _tokenIds.current();
 
+        uint256 id = _tokenIds.current();
         _mint(to, id);
 
-        (bool success, ) = gitcoin.call{value: msg.value}("");
-        require(success, "Could not send, please retry");
+        (bool success, ) = recipient.call{value: msg.value}("");
+        require(success, "could not send");
 
         return id;
     }

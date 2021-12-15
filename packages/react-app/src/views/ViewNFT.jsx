@@ -6,12 +6,21 @@ import axios from "axios";
 import { formatEther } from "@ethersproject/units";
 import { usePoller } from "eth-hooks";
 import { NFTABI } from "../contracts/nftabi.js";
-
-import { useContractReader } from "eth-hooks";
 import { useExternalContractLoader } from "../hooks";
 import { useParams } from "react-router-dom";
 
-const ViewNFT = ({ loadWeb3Modal, tx, localProvider, provider, userSigner, localChainId, address, ...props }) => {
+const ViewNFT = ({
+  loadWeb3Modal,
+  tx,
+  signer,
+  yourLocalBalance,
+  localProvider,
+  provider,
+  userSigner,
+  localChainId,
+  address,
+  ...props
+}) => {
   const [collection, setCollection] = useState({
     loading: true,
     items: [],
@@ -19,30 +28,23 @@ const ViewNFT = ({ loadWeb3Modal, tx, localProvider, provider, userSigner, local
   const [floor, setFloor] = useState("0.0");
   const [supply, setSupply] = useState();
   const [limit, setLimit] = useState();
+  const [nftPrice, setNFTPrice] = useState();
 
   let { nft } = useParams();
   console.log(nft);
 
   const NFT = useExternalContractLoader(localProvider, nft, NFTABI);
 
-  // Load in your local 📝 contract and read a value from it:
-  //const readContracts = useContractLoader(localProvider, contractConfig);
-
-  // If you want to make 🔐 write transactions to your contracts, use the userSigner:
-  //const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
-
-  const priceToMint = useContractReader(NFT, nft, "price");
-
-  //let newContract = NFT.attach(contractConfig);
-
   usePoller(async () => {
     if (NFT && address) {
+      const nftNowPrice = await NFT.price();
       const floorPrice = await NFT.floor();
       const supply = await NFT.currentToken();
       const limit = await NFT.limit();
       setSupply(formatEther(supply));
       setLimit(formatEther(limit));
       setFloor(formatEther(floorPrice));
+      setNFTPrice(nftNowPrice);
     }
   }, 1500);
 
@@ -96,18 +98,6 @@ const ViewNFT = ({ loadWeb3Modal, tx, localProvider, provider, userSigner, local
     if (NFT) loadCollection();
   }, [address, NFT, NFT]);
 
-  /* useEffect(() => {
-    let newCustomAddresses = { NFT: nft };
-    setCustomAddresses(newCustomAddresses);
-    if (newCustomAddresses) loadCollection();
-  }, [address, readContracts, writeContracts]); */
-
-  /* useEffect(() => {
-    let newCustomAddresses = { NFT: nft };
-    if (merklerMetadata) newCustomAddresses.ERC20 = merklerMetadata.args._tokenAddress;
-    setCustomAddresses(newCustomAddresses);
-  }, [merklerMetadata]); */
-
   return (
     <div style={{ maxWidth: 768, margin: "20px auto" }}>
       {address ? (
@@ -138,8 +128,9 @@ const ViewNFT = ({ loadWeb3Modal, tx, localProvider, provider, userSigner, local
             disabled={supply >= limit}
             onClick={async () => {
               const priceRightNow = await NFT.price();
+              setNFTPrice(priceRightNow);
               try {
-                const txCur = await tx(NFT.mintItem(address, { value: priceRightNow }));
+                const txCur = await tx(NFT.mintItem(address, { value: nftPrice }));
                 await txCur.wait();
               } catch (e) {
                 console.log("mint failed", e);
@@ -147,7 +138,7 @@ const ViewNFT = ({ loadWeb3Modal, tx, localProvider, provider, userSigner, local
               loadCollection();
             }}
           >
-            MINT for Ξ{priceToMint && (+ethers.utils.formatEther(priceToMint)).toFixed(4)}
+            MINT for Ξ{nftPrice && (+ethers.utils.formatEther(nftPrice)).toFixed(4)}
           </Button>
         </>
       ) : (
