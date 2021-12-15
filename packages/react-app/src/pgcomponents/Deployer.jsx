@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "antd";
+import { formatEther, parseEther } from "@ethersproject/units";
 
 function Details({
   tx,
@@ -33,7 +34,7 @@ function Details({
 
       if (pgType === 2) {
         method = "deployERC721";
-        extradata = [pgData.startPrice, pgData.inflation, pgData.baseURI, pgData.userURIs];
+        extradata = [parseEther(pgData.startPrice), pgData.inflation, pgData.baseURI, pgData.userURIs];
       }
 
       calldata = [...calldata, ...extradata];

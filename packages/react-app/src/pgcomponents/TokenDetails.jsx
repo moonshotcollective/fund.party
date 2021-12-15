@@ -167,7 +167,7 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                 tooltip="Price inflation rate info"
                 className="w-full"
               >
-                <Input type="number" placeholder="3" min={0} max={100} addonAfter={<span>%</span>} />
+                <Input type="number" placeholder="3" min={1} max={100} addonAfter={<span>%</span>} />
               </Form.Item>
             </>
           )}

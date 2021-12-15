@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card } from "antd";
 import { useRef } from "react";
 import { ethers } from "ethers";
@@ -28,6 +29,15 @@ export default function PGCard({ creator, token, supply, pgType, mainnetProvider
       <div className="flex flex-row items-center mb-2">
         <span className="mr-3">Supply: </span>
         <span>{supply}</span>
+      </div>
+      <div className="flex flex-row items-center mb-2">
+        <Link
+          to={{
+            pathname: `/view/${token}`,
+          }}
+        >
+          View NFT
+        </Link>
       </div>
       <div className="flex flex-row items-center mb-2">
         <span className="mr-3">Token Address: </span>

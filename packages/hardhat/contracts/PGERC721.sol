@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract PGERC721 is ERC721, Ownable {
+contract PGERC721 is ERC721Enumerable, Ownable {
     address payable public constant gitcoin =
         payable(0xde21F729137C5Af1b01d73aF1dC21eFfa2B8a0d6);
 
@@ -14,11 +15,11 @@ contract PGERC721 is ERC721, Ownable {
 
     address public admin;
     uint256 public currentSupply = 0;
-    uint256 public _vCurve;
-    uint256 public _vPrice;
+    uint256 public curve;
+    uint256 public price;
     string[] private uris;
 
-    uint256 private _vMaxSupply;
+    uint256 public limit;
     string private _userURI;
 
     constructor(
@@ -33,9 +34,9 @@ contract PGERC721 is ERC721, Ownable {
     ) ERC721(name, symbol) {
         //
         admin = _admin;
-        _vMaxSupply = _maxSupply;
-        _vCurve = _curve;
-        _vPrice = _basePrice;
+        limit = _maxSupply;
+        curve = _curve;
+        price = _basePrice;
         _userURI = base;
         uris = _uris;
     }
@@ -44,13 +45,16 @@ contract PGERC721 is ERC721, Ownable {
         return _userURI;
     }
 
-    function mintItem() public payable returns (uint256) {
-        _vPrice = (_vPrice * _vCurve) / 1000;
+    function mintItem(address to) public payable returns (uint256) {
+        require(_tokenIds.current() < limit, "DONE MINTING");
+        require(msg.value >= price, "NOT ENOUGH");
 
-        require(msg.value >= _vPrice, "Tx value less than mint price");
+        price = (price * curve) / 1000;
+
+        require(msg.value >= price, "Tx value less than mint price");
 
         require(
-            _tokenIds.current() < _vMaxSupply,
+            _tokenIds.current() < limit,
             "Minting complete, please check secondary markets"
         );
 
@@ -58,7 +62,7 @@ contract PGERC721 is ERC721, Ownable {
         currentSupply++;
         uint256 id = _tokenIds.current();
 
-        _mint(msg.sender, id);
+        _mint(to, id);
 
         (bool success, ) = gitcoin.call{value: msg.value}("");
         require(success, "Could not send, please retry");
@@ -77,7 +81,7 @@ contract PGERC721 is ERC721, Ownable {
             _exists(tokenId),
             "ERC721Metadata: URI query for nonexistent token"
         );
-        require(tokenId <= _vMaxSupply, "Nonexistent token");
+        require(tokenId <= limit, "Nonexistent token");
 
         return
             bytes(_userURI).length > 0
