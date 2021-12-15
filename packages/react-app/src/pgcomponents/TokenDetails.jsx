@@ -9,12 +9,16 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
   const [form] = Form.useForm();
   const [requiredMark, setRequiredMarkType] = useState("optional");
 
+  let uris = [];
+
   const onRequiredTypeChange = ({ requiredMarkValue }) => {
     setRequiredMarkType(requiredMarkValue);
   };
 
   const validateAndContinue = async () => {
-    console.log(CID);
+    files.forEach(element => uris.push(element.path));
+    //console.log(uris);
+    form.setFieldsValue({ userURIs: uris });
     form.setFieldsValue({ totalSupply: files.length });
     form.setFieldsValue({ baseURI: CID });
     const values = form.getFieldsValue();
@@ -91,9 +95,12 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
             requiredMarkValue: requiredMark,
             name: pgData.name,
             symbol: pgData.symbol,
-            totalSupply: pgData.totalSupply || files.length,
+            totalSupply: pgData.totalSupply,
+            startPrice: pgData.startPrice,
             decimal: pgData.decimal || 18,
-            baseURI: pgData.baseURI || CID,
+            baseURI: pgData.baseURI,
+            owner: pgData.owner,
+            userURIs: pgData.uris,
             inflation: pgData.inflation,
           }}
           size="large"
@@ -117,6 +124,19 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                 <h1 className="text-2xl font-medium">Upload jsons</h1>
               </div>
               <Dropzone files={files} setFiles={setFiles} />
+              <Form.Item
+                label="Total Supply"
+                name="totalSupply"
+                required
+                tooltip="Equal to # of JSONs"
+                className="w-full"
+                display="none"
+              >
+                {files.length}
+              </Form.Item>
+              <Form.Item label="Token uris" name="userURIs" required tooltip="" className="w-full">
+                {files.length}
+              </Form.Item>
               <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
                 {CID && (
                   <div className="flex flex-1 flex-row mb-2">
@@ -127,6 +147,9 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                     </div>
                   </div>
                 )}
+              </Form.Item>
+              <Form.Item label="Owner Address" name="owner" required tooltip="Address of Owner" className="w-full">
+                <Input placeholder="0x..." />
               </Form.Item>
               <Form.Item
                 label="Start mint price"

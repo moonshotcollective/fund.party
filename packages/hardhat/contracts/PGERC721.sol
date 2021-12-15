@@ -23,11 +23,11 @@ contract PGERC721 is ERC721, Ownable {
 
     constructor(
         address _admin,
-        uint256 _maxSupply,
-        uint256 _curve,
-        uint256 _basePrice,
         string memory name,
         string memory symbol,
+        uint256 _maxSupply,
+        uint256 _basePrice,
+        uint256 _curve,
         string memory base,
         string[] memory _uris
     ) ERC721(name, symbol) {

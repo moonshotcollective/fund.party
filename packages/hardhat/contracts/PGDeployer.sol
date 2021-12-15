@@ -43,22 +43,22 @@ contract PGDeployer is Ownable {
 
     function deployERC721(
         address admin,
-        uint256 maxSupply,
-        uint256 curve,
-        uint256 basePrice,
         string memory name,
         string memory symbol,
+        uint256 maxSupply,
+        uint256 basePrice,
+        uint256 curve,
         string memory base,
         string[] memory uris
     ) public {
         // deploy new token
         PGERC721 token = new PGERC721(
             admin,
-            maxSupply,
-            curve,
-            basePrice,
             name,
             symbol,
+            maxSupply,
+            basePrice,
+            curve,
             base,
             uris
         );

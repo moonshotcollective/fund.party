@@ -20,6 +20,11 @@ function Details({
     setIsDeploying(true);
     console.log(pgData);
 
+    /* uint256 _basePrice,
+    uint256 _curve,
+    string memory base,
+    string[] memory _uris */
+
     try {
       let method = "deployERC20";
       const { name, symbol, totalSupply, decimal } = pgData;
@@ -28,7 +33,7 @@ function Details({
 
       if (pgType === 2) {
         method = "deployERC721";
-        extradata = [pgData.baseURI, ""];
+        extradata = [pgData.startPrice, pgData.inflation, pgData.baseURI, pgData.userURIs];
       }
 
       calldata = [...calldata, ...extradata];
@@ -60,8 +65,8 @@ function Details({
 
   return (
     <div className="text-center">
-      <h1 className="text-2xl font-medium">Deployment in Progress</h1>
-      <div className="my-2">Wait while we confirm your token on the blockchain.</div>
+      <h1 className="text-2xl font-medium">Review and Deploy</h1>
+      <div className="my-2">ALERT: Make sure all token details are correct.</div>
 
       <div className="flex flex-1 flex-col items-center justify-center mx-auto mt-16 max-w-lg">
         {pgData.name && (
