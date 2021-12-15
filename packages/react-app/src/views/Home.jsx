@@ -9,8 +9,6 @@ function Home({ tx, writeContracts, address, readContracts, localProvider }) {
 
   const pgs = (useEventListener(readContracts, "PGDeployer", "pgDeployed", localProvider, 1) || []).reverse();
 
-  console.log(pgs);
-
   return (
     <div className="mt-20 pb-20 container mx-auto">
       <DeployModal

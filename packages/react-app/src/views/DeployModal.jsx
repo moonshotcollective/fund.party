@@ -17,8 +17,6 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
   const [activeStep, setActiveStep] = useState(0);
   const [pgType, setPgType] = useState(0);
   const [pgData, setPgData] = useState({});
-  const [uFiles, setuFiles] = useState([]);
-  const [uCID, setuCID] = useState("");
   const [isDeploying, setIsDeploying] = useState(false);
 
   const reset = () => {
@@ -84,13 +82,9 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
           reset={reset}
           pgType={pgType}
           pgData={pgData}
-          uFiles={uFiles}
-          uCID={uCID}
           address={address}
           setPgType={setPgType}
           setPgData={setPgData}
-          setuFiles={setuFiles}
-          setuCID={setuCID}
           onNextStep={onNextStep}
           isDeploying={isDeploying}
           setIsDeploying={setIsDeploying}

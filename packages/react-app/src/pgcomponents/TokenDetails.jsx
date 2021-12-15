@@ -3,17 +3,7 @@ import { Button, Form, Input } from "antd";
 import { NFTStorage } from "nft.storage";
 import { useDropzone } from "react-dropzone";
 
-function Details({
-  onPreviousStep,
-  onNextStep,
-  pgType,
-  pgData,
-  setPgData,
-  setuFiles,
-  setuCID,
-  handleDeployment,
-  ...props
-}) {
+function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handleDeployment, ...props }) {
   const [files, setFiles] = useState([]);
   const [CID, setCID] = useState("");
   const [form] = Form.useForm();
@@ -24,8 +14,10 @@ function Details({
   };
 
   const validateAndContinue = async () => {
-    const values = form.getFieldsValue();
+    console.log(CID);
+    form.setFieldsValue({ totalSupply: files.length });
     form.setFieldsValue({ baseURI: CID });
+    const values = form.getFieldsValue();
     // TODO: run validation and then continue
 
     setPgData(values);
@@ -41,22 +33,6 @@ function Details({
   });
 
   function Dropzone(props) {
-    const baseStyle = {
-      flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      padding: "20px",
-      borderWidth: 2,
-      borderRadius: 2,
-      borderColor: "#eeeeee",
-      borderStyle: "dashed",
-      backgroundColor: "#fafafa",
-      color: "#bdbdbd",
-      outline: "none",
-      transition: "border .24s ease-in-out",
-    };
-
     const { getRootProps, getInputProps, open } = useDropzone({
       accept: ".json",
       maxFiles: 10000,
@@ -64,7 +40,6 @@ function Details({
         setFiles(
           acceptedFiles.map(file =>
             Object.assign(file, {
-              preview: URL.createObjectURL(file),
               pinblob: pintoStorage(acceptedFiles),
               //filelist: createList(...acceptedFiles)
             }),
@@ -72,14 +47,6 @@ function Details({
         );
       },
     });
-
-    useEffect(
-      () => () => {
-        // Make sure to revoke the data uris to avoid memory leaks
-        files.forEach(file => URL.revokeObjectURL(file.preview));
-      },
-      [files],
-    );
 
     return (
       <div {...getRootProps({ className: "dropzone" })}>
@@ -97,9 +64,7 @@ function Details({
 
   async function pintoStorage(file) {
     var cid = await client.storeDirectory(file);
-    setuCID(`https://ipfs.io/ipfs/${cid}/`);
     setCID(`https://ipfs.io/ipfs/${cid}/`);
-    console.log(cid);
 
     //let filenames = file.path
     //filenames.map(file => file.path)
@@ -126,9 +91,9 @@ function Details({
             requiredMarkValue: requiredMark,
             name: pgData.name,
             symbol: pgData.symbol,
-            totalSupply: pgData.totalSupply,
+            totalSupply: pgData.totalSupply || files.length,
             decimal: pgData.decimal || 18,
-            baseURI: pgData.baseURI,
+            baseURI: pgData.baseURI || CID,
             inflation: pgData.inflation,
           }}
           size="large"
@@ -152,9 +117,6 @@ function Details({
                 <h1 className="text-2xl font-medium">Upload jsons</h1>
               </div>
               <Dropzone files={files} setFiles={setFiles} />
-              <Form.Item label="Total Supply" name="supply" required tooltip="Equal to # of JSONs" className="w-full">
-                {files.length}
-              </Form.Item>
               <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
                 {CID && (
                   <div className="flex flex-1 flex-row mb-2">

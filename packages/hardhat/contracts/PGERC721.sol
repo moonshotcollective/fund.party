@@ -16,7 +16,6 @@ contract PGERC721 is ERC721, Ownable {
     uint256 public currentSupply = 0;
     uint256 public _vCurve;
     uint256 public _vPrice;
-    string public contractURI = "";
     string[] private uris;
 
     uint256 private _vMaxSupply;
@@ -30,7 +29,6 @@ contract PGERC721 is ERC721, Ownable {
         string memory name,
         string memory symbol,
         string memory base,
-        string memory _contractURI,
         string[] memory _uris
     ) ERC721(name, symbol) {
         //
@@ -39,7 +37,6 @@ contract PGERC721 is ERC721, Ownable {
         _vCurve = _curve;
         _vPrice = _basePrice;
         _userURI = base;
-        contractURI = _contractURI;
         uris = _uris;
     }
 

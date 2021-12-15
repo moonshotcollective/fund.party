@@ -12,6 +12,7 @@ function Details({
   onPreviousStep,
   setIsDeploying,
   uCID,
+  files,
 }) {
   console.log(pgData);
 
@@ -89,12 +90,12 @@ function Details({
             <div>{pgData.inflation}</div>
           </div>
         )}
-        {uCID && (
+        {pgData.baseURI && (
           <div className="flex flex-1 flex-row mb-2">
             <div className="mr-2 flex flex-nowrap">Token baseURI:</div>
             <div className="truncate max-w-sm">
-              <a href={uCID} target="_blank">
-                {uCID}
+              <a href={pgData.baseURI} target="_blank">
+                {pgData.baseURI}
               </a>
             </div>
           </div>

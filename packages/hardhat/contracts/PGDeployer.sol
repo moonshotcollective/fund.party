@@ -49,7 +49,6 @@ contract PGDeployer is Ownable {
         string memory name,
         string memory symbol,
         string memory base,
-        string memory contractURI,
         string[] memory uris
     ) public {
         // deploy new token
@@ -61,7 +60,6 @@ contract PGDeployer is Ownable {
             name,
             symbol,
             base,
-            contractURI,
             uris
         );
 
