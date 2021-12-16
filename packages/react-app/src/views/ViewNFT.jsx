@@ -31,7 +31,6 @@ const ViewNFT = ({
   const [nftPrice, setNFTPrice] = useState();
 
   let { nft } = useParams();
-  console.log(nft);
 
   const NFT = useExternalContractLoader(localProvider, nft, NFTABI);
 
@@ -53,7 +52,8 @@ const ViewNFT = ({
     const tokenURI = await NFT.tokenURI(id);
     const metadata = await axios.get(tokenURI);
     const approved = await NFT.getApproved(id);
-    return { ...metadata.data, id, tokenURI, approved: approved === NFT.address };
+    const contractName = await NFT.name();
+    return { ...metadata.data, id, tokenURI, approved: approved === NFT.address, contractName };
   };
 
   const loadCollection = async () => {
@@ -102,44 +102,57 @@ const ViewNFT = ({
     <div style={{ maxWidth: 768, margin: "20px auto" }}>
       {address ? (
         <>
-          <div style={{ display: "grid", margin: "0 auto" }}>
-            <h3 style={{ marginBottom: 25 }}>My collection: </h3>
+          <div style={{ display: "row", margin: "0 auto" }}>
+            <div style={{ marginLeft: "20px" }}>
+              <Button
+                style={{ marginTop: 15 }}
+                type="primary"
+                disabled={supply >= limit}
+                onClick={async () => {
+                  const priceRightNow = await NFT.price();
+                  setNFTPrice(priceRightNow);
+                  try {
+                    const txCur = await tx(NFT.mintItem(address, { value: nftPrice }));
+                    await txCur.wait();
+                  } catch (e) {
+                    console.log("mint failed", e);
+                  }
+                  loadCollection();
+                }}
+              >
+                MINT for Ξ{nftPrice && (+ethers.utils.formatEther(nftPrice)).toFixed(4)}
+              </Button>
+            </div>
             {collection.items.length === 0 && <p>Your collection is empty</p>}
             {collection.items.length > 0 &&
               collection.items.map(item => (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
+                <div
+                  style={{
+                    border: "1px solid #cccccc",
+                    padding: 16,
+                    width: 380,
+                    margin: "auto",
+                    marginTop: 20,
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
                   <img
-                    style={{ maxWidth: "150px", display: "block", margin: "0 auto", marginBottom: "20px" }}
+                    style={{ maxWidth: "150px", display: "block", margin: "0 auto", marginBottom: "10px" }}
                     src={item.image}
                     alt="Your NFT"
                   />
                   <div style={{ marginLeft: "20px" }}>
+                    <p style={{ textAlign: "center", marginTop: 15 }}>Contract: {item.contractName}</p>
                     <Button style={{ width: "100%", minWidth: 100 }} onClick={() => redeem(item.id)}>
                       Redeem
                     </Button>
+                    <p style={{ textAlign: "center", marginTop: 15 }}>{item.name}</p>
                   </div>
                 </div>
               ))}
           </div>
           <p style={{ textAlign: "center", marginTop: 15 }}>Current floor price = {floor.substr(0, 6)} ETH</p>
-          <Button
-            style={{ marginTop: 15 }}
-            type="primary"
-            disabled={supply >= limit}
-            onClick={async () => {
-              const priceRightNow = await NFT.price();
-              setNFTPrice(priceRightNow);
-              try {
-                const txCur = await tx(NFT.mintItem(address, { value: nftPrice }));
-                await txCur.wait();
-              } catch (e) {
-                console.log("mint failed", e);
-              }
-              loadCollection();
-            }}
-          >
-            MINT for Ξ{nftPrice && (+ethers.utils.formatEther(nftPrice)).toFixed(4)}
-          </Button>
         </>
       ) : (
         <Button key="loginbutton" type="primary" onClick={loadWeb3Modal}>
