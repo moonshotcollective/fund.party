@@ -60,7 +60,7 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = ["localhost", "mainnet", "rinkeby"];
+  const networkOptions = ["rinkeby", "localhost"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
@@ -200,6 +200,7 @@ function App(props) {
             address={address}
             localProvider={localProvider}
             readContracts={readContracts}
+            blockExplorer={blockExplorer}
             writeContracts={writeContracts}
             mainnetProvider={mainnetProvider}
             yourLocalBalance={yourLocalBalance}

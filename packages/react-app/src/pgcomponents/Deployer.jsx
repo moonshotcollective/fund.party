@@ -24,7 +24,6 @@ function Details({ tx, reset, pgType, pgData, address, isDeploying, writeContrac
       const result = tx(writeContracts.PGDeployer[method](...calldata), update => {
         console.log("📡 Transaction Update:", update);
         if (update && (update.status === "confirmed" || update.status === 1)) {
-          reset();
           console.log(" 🍾 Transaction " + update.hash + " finished!");
           console.log(
             " ⛽️ " +
@@ -38,7 +37,12 @@ function Details({ tx, reset, pgType, pgData, address, isDeploying, writeContrac
         }
       });
       console.log("awaiting metamask/web3 confirm result...", result);
-      console.log(await result);
+      const txResult = await result;
+
+      // wait for given number of confirmations
+      txResult.wait(1);
+
+      reset();
     } catch (error) {
       console.log(error);
       setIsDeploying(false);
