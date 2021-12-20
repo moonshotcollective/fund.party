@@ -19,7 +19,8 @@ contract PGDeployer is Ownable {
         address indexed token,
         address indexed creator,
         pgType indexed pgtype,
-        uint256 supply
+        uint256 supply,
+        uint256 timestamp
     );
     event pgerc20Deployed(address indexed token);
     event pgerc721Deployed(address indexed token, uint256 totalSupply);
@@ -38,7 +39,13 @@ contract PGDeployer is Ownable {
         token.transferOwnership(tokenOwner);
 
         // emit event
-        emit pgDeployed(address(token), msg.sender, pgType.erc20, supply);
+        emit pgDeployed(
+            address(token),
+            msg.sender,
+            pgType.erc20,
+            supply,
+            block.timestamp
+        );
     }
 
     function deployERC721(
@@ -62,6 +69,12 @@ contract PGDeployer is Ownable {
         token.transferOwnership(tokenOwner);
 
         // emit event
-        emit pgDeployed(address(token), msg.sender, pgType.erc721, supply);
+        emit pgDeployed(
+            address(token),
+            msg.sender,
+            pgType.erc721,
+            supply,
+            block.timestamp
+        );
     }
 }

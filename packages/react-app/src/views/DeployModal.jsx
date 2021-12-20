@@ -24,6 +24,7 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
     setActiveStep(0);
     setPgType(0);
     setPgData({});
+    setIsDeploying(false);
   };
 
   const onNextStep = () => {
