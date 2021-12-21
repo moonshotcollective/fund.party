@@ -7,7 +7,7 @@ import { formatEther } from "@ethersproject/units";
 import { usePoller } from "eth-hooks";
 import { NFTABI } from "../contracts/nftabi.js";
 import { useExternalContractLoader } from "../hooks";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 const ViewNFT = ({
   loadWeb3Modal,
@@ -122,6 +122,14 @@ const ViewNFT = ({
               >
                 MINT for Ξ{nftPrice && (+ethers.utils.formatEther(nftPrice)).toFixed(4)}
               </Button>
+              <span className="ml-1 mr-1">or</span>
+              <Link
+                to={{
+                  pathname: `/whale/${nft}`,
+                }}
+              >
+                Fund It 🐳
+              </Link>
             </div>
             {collection.items.length === 0 && <p>Your collection is empty</p>}
             {collection.items.length > 0 &&
@@ -145,7 +153,7 @@ const ViewNFT = ({
                   <div style={{ marginLeft: "20px" }}>
                     <p style={{ textAlign: "center", marginTop: 15 }}>Contract: {item.contractName}</p>
                     <Button style={{ width: "100%", minWidth: 100 }} onClick={() => redeem(item.id)}>
-                      Redeem
+                      Redeem for {floor.substr(0, 6)}
                     </Button>
                     <p style={{ textAlign: "center", marginTop: 15 }}>{item.name}</p>
                   </div>

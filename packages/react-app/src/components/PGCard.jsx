@@ -38,6 +38,14 @@ export default function PGCard({ creator, token, supply, pgType, mainnetProvider
         >
           View NFT
         </Link>
+        <span className="ml-1 mr-1">or</span>
+        <Link
+          to={{
+            pathname: `/whale/${token}`,
+          }}
+        >
+          Fund It 🐳
+        </Link>
       </div>
       <div className="flex flex-row items-center mb-2">
         <span className="mr-3">Token Address: </span>

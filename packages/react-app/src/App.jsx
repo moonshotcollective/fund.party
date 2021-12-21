@@ -21,7 +21,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ViewNFT } from "./views";
+import { Home, ViewNFT, WhalesUI } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -218,6 +218,17 @@ function App(props) {
         </Route>
         <Route path="/view/:nft">
           <ViewNFT
+            address={address}
+            tx={tx}
+            userSigner={userSigner}
+            localProvider={localProvider}
+            userSigner={userSigner}
+            localChainId={localChainId}
+            readContracts={readContracts}
+          />
+        </Route>
+        <Route path="/whale/:nft">
+          <WhalesUI
             address={address}
             tx={tx}
             userSigner={userSigner}
