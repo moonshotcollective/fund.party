@@ -12,14 +12,12 @@ import { useParams, Link } from "react-router-dom";
 const ViewNFT = ({
   loadWeb3Modal,
   tx,
-  signer,
   yourLocalBalance,
   localProvider,
   provider,
   userSigner,
   localChainId,
   address,
-  ...props
 }) => {
   const [collection, setCollection] = useState({
     loading: true,
@@ -47,8 +45,8 @@ const ViewNFT = ({
     }
   }, 1500);
 
-  const getTokenURI = async (ownerAddress, index) => {
-    const id = await NFT.tokenOfOwnerByIndex(ownerAddress, index);
+  const getTokenURI = async (address, index) => {
+    const id = await NFT.tokenOfOwnerByIndex(address, index);
     const tokenURI = await NFT.tokenURI(id);
     const metadata = await axios.get(tokenURI);
     const approved = await NFT.getApproved(id);
@@ -76,7 +74,7 @@ const ViewNFT = ({
 
   const redeem = async id => {
     try {
-      const redeemTx = await tx(NFT.redeem(id));
+      const redeemTx = await tx(userSigner(NFT.redeem(id)));
       await redeemTx.wait();
     } catch (e) {
       console.log("redeem tx error:", e);
@@ -86,7 +84,7 @@ const ViewNFT = ({
 
   const approveForBurn = async id => {
     try {
-      const approveTx = await tx(NFT.approve(NFT.address, id));
+      const approveTx = await tx(userSigner(NFT.approve(NFT.address, id)));
       await approveTx.wait();
     } catch (e) {
       console.log("Approve tx error:", e);
@@ -112,7 +110,17 @@ const ViewNFT = ({
                   const priceRightNow = await NFT.price();
                   setNFTPrice(priceRightNow);
                   try {
-                    const txCur = await tx(NFT.mintItem(address, { value: nftPrice }));
+                    /* const increaseFloor = async () => {
+                      tx(
+                        userSigner.sendTransaction({
+                          to: NFT.address,
+                          value: parseEther(q), */
+                    const txCur = await tx(
+                      userSigner.sendTransaction({
+                        to: NFT.address,
+                        value: nftPrice,
+                      }),
+                    );
                     await txCur.wait();
                   } catch (e) {
                     console.log("mint failed", e);

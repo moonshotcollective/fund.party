@@ -42,6 +42,7 @@
     "fortmatic": "^2.2.1",
     "graphiql": "^1.4.7",
     "graphql": "^15.3.0",
+    "ipfs-http-client": "^55.0.0",
     "isomorphic-fetch": "^3.0.0",
     "nft.storage": "^3.3.0",
     "node-watch": "^0.7.1",

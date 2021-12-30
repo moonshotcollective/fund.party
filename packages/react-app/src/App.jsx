@@ -218,8 +218,8 @@ function App(props) {
         </Route>
         <Route path="/view/:nft">
           <ViewNFT
-            address={address}
             tx={tx}
+            address={address}
             userSigner={userSigner}
             localProvider={localProvider}
             userSigner={userSigner}
@@ -233,7 +233,6 @@ function App(props) {
             tx={tx}
             userSigner={userSigner}
             localProvider={localProvider}
-            userSigner={userSigner}
             localChainId={localChainId}
             readContracts={readContracts}
           />
