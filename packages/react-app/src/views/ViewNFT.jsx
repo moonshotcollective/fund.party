@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "antd";
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import axios from "axios";
 
 import { formatEther } from "@ethersproject/units";
@@ -18,6 +18,7 @@ const ViewNFT = ({
   userSigner,
   localChainId,
   address,
+  userProvider,
 }) => {
   const [collection, setCollection] = useState({
     loading: true,
@@ -30,7 +31,7 @@ const ViewNFT = ({
 
   let { nft } = useParams();
 
-  const NFT = useExternalContractLoader(localProvider, nft, NFTABI);
+  const NFT = useExternalContractLoader(userProvider, nft, NFTABI);
 
   usePoller(async () => {
     if (NFT && address) {
@@ -116,9 +117,8 @@ const ViewNFT = ({
                           to: NFT.address,
                           value: parseEther(q), */
                     const txCur = await tx(
-                      userSigner.sendTransaction({
-                        to: NFT.address,
-                        value: nftPrice,
+                      NFT.mintItem({
+                        value: priceRightNow,
                       }),
                     );
                     await txCur.wait();
@@ -159,11 +159,10 @@ const ViewNFT = ({
                     alt="Your NFT"
                   />
                   <div style={{ marginLeft: "20px" }}>
-                    <p style={{ textAlign: "center", marginTop: 15 }}>Contract: {item.contractName}</p>
+                    <p style={{ textAlign: "center", marginTop: 15 }}>{item.name}</p>
                     <Button style={{ width: "100%", minWidth: 100 }} onClick={() => redeem(item.id)}>
                       Redeem for {floor.substr(0, 6)}
                     </Button>
-                    <p style={{ textAlign: "center", marginTop: 15 }}>{item.name}</p>
                   </div>
                 </div>
               ))}

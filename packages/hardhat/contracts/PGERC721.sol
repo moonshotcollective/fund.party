@@ -45,7 +45,7 @@ contract PGERC721 is ERC721Enumerable, Ownable {
         return _userURI;
     }
 
-    function mintItem(address to) public payable returns (uint256) {
+    function mintItem() public payable returns (uint256) {
         require(_tokenIds.current() < limit, "DONE MINTING");
         require(msg.value >= price, "NOT ENOUGH");
 
@@ -55,7 +55,7 @@ contract PGERC721 is ERC721Enumerable, Ownable {
         _tokenIds.increment();
 
         uint256 id = _tokenIds.current();
-        _mint(to, id);
+        _mint(msg.sender, id);
 
         (bool success, ) = recipient.call{value: msg.value}("");
         require(success, "could not send");

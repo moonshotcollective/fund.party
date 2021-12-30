@@ -102,6 +102,7 @@ function App(props) {
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
   const userSigner = userProviderAndSigner.signer;
+  const userProvider = userProviderAndSigner.provider;
 
   useEffect(() => {
     async function getAddress() {
@@ -225,6 +226,7 @@ function App(props) {
             userSigner={userSigner}
             localChainId={localChainId}
             readContracts={readContracts}
+            userProvider={userProvider}
           />
         </Route>
         <Route path="/whale/:nft">

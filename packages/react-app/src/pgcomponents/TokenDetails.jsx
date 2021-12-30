@@ -6,6 +6,7 @@ import { create, urlSource } from "ipfs-http-client";
 
 function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handleDeployment, ...props }) {
   const [files, setFiles] = useState([]);
+  const [URI, setURI] = useState();
   const [userURI2, setUserURI2] = useState();
   const [form] = Form.useForm();
   const [requiredMark, setRequiredMarkType] = useState("optional");
@@ -23,18 +24,23 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
       links.push(link);
     }
     console.log(links);
+    const fileNames = [];
+
+    for (let x = 0; x < links.length; x++) {
+      fileNames.push(links[x].name);
+    }
+    //console.log(ipfsPath);
+    setURI(`http://ipfs.io/ipfs/${userURI2}/`);
+    setFiles(fileNames);
+    console.log(fileNames);
+    form.setFieldsValue({ userURIs: fileNames });
+    form.setFieldsValue({ totalSupply: fileNames.length.toString() });
   }
 
-  /* const onFill = () => {
-    form.setFieldsValue({
-      uri: "https://taobao.com/",
-    });
-  }; */
-
   const validateAndContinue = async () => {
-    files.forEach(element => uris.push(element.path));
-    form.setFieldsValue({ userURIs: uris });
-    form.setFieldsValue({ totalSupply: files.length });
+    //files.forEach(element => uris.push(element.path));
+    form.setFieldsValue({ baseURI: `http://ipfs.io/ipfs/${userURI2}/` });
+
     const values = form.getFieldsValue();
     // TODO: run validation and then continue
 
@@ -115,17 +121,17 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
               <Form.Item label="Token uris" name="userURIs" required tooltip="" className="w-full">
                 {files.length}
               </Form.Item>
-              {/* <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
-                {CID && (
+              <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
+                {URI && (
                   <div className="flex flex-1 flex-row mb-2">
                     <div className="truncate max-w-sm">
-                      <a href={CID} target="_blank">
-                        {CID}
+                      <a href={URI} target="_blank">
+                        {URI}
                       </a>
                     </div>
                   </div>
                 )}
-              </Form.Item> */}
+              </Form.Item>
               <Form.Item label="Owner Address" name="owner" required tooltip="Address of Owner" className="w-full">
                 <Input placeholder="0x..." />
               </Form.Item>
