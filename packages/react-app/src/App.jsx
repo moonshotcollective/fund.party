@@ -1,11 +1,19 @@
 import { Button, Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import { useBalance, useContractLoader, useGasPrice, useOnBlock, useUserProviderAndSigner } from "eth-hooks";
+import {
+  ExportOutlined,
+  ForkOutlined,
+  ExperimentOutlined,
+  ReconciliationOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, setRoute } from "react";
 import { Link, Route, Switch, useLocation } from "react-router-dom";
 import {
   Account,
+  Address,
   Contract,
   Faucet,
   GasGauge,
@@ -21,8 +29,8 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ViewNFT, WhalesUI } from "./views";
-import { useStaticJsonRPC } from "./hooks";
+import { Home, ViewNFT, WhalesUI, Checkout } from "./views";
+import { useStaticJsonRPC, useLocalStorage } from "./hooks";
 
 const { ethers } = require("ethers");
 /*
@@ -114,6 +122,11 @@ function App(props) {
     getAddress();
   }, [userSigner]);
 
+  const [route, setRoute] = useState();
+  useEffect(() => {
+    setRoute(window.location.pathname);
+  }, [setRoute]);
+
   // You can warn the user if you would like them to be on a specific network
   const localChainId = localProvider && localProvider._network && localProvider._network.chainId;
   const selectedChainId =
@@ -174,6 +187,76 @@ function App(props) {
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
+  const [cart, setCart] = useLocalStorage("buidlguidlcart", [], 12000000); //12000000 ms timeout? idk
+  //console.log("cart",cart)
+  //console.log("route",route)
+
+  let displayCart = [];
+  if (cart && cart.length > 0) {
+    for (let c in cart) {
+      console.log("CART ITEM", c, cart[c]);
+      if (!cart[c].streamAddress) {
+        displayCart.push(
+          <div key={c} style={{ padding: 22, border: "1px solid #dddddd", borderRadius: 8 }}>
+            <div style={{ marginLeft: 32 }}>
+              <div style={{ float: "right", zIndex: 2 }}>
+                <Button
+                  borderless={true}
+                  onClick={() => {
+                    console.log("REMOVE ", c, cart[c]);
+                    let update = [];
+                    for (let x in cart) {
+                      if (cart[c].id != cart[x].id) {
+                        update.push(cart[x]);
+                      }
+                    }
+                    console.log("update", update);
+                    setCart(update);
+                  }}
+                >
+                  x
+                </Button>
+              </div>
+              <div style={{ fontSize: 18, marginLeft: "auto" }}>{cart[c].name}</div>
+            </div>
+          </div>,
+        );
+      } else {
+        displayCart.push(
+          <div key={c} style={{ padding: 16, border: "1px solid #dddddd", borderRadius: 8 }}>
+            <div style={{ marginLeft: 32 }}>
+              <div style={{ float: "right", zIndex: 2 }}>
+                <Button
+                  onClick={() => {
+                    console.log("REMOVE ", c, cart[c]);
+                    let update = [];
+                    for (let x in cart) {
+                      if (cart[c].id != cart[x].id) {
+                        update.push(cart[x]);
+                      }
+                    }
+                    console.log("update", update);
+                    setCart(update);
+                  }}
+                >
+                  x
+                </Button>
+              </div>
+              <Address
+                hideCopy={true}
+                punkBlockie={true}
+                fontSize={18}
+                address={cart[c].address}
+                ensProvider={mainnetProvider}
+                blockExplorer={blockExplorer}
+              />
+            </div>
+          </div>,
+        );
+      }
+    }
+  }
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -184,6 +267,33 @@ function App(props) {
         selectedChainId={selectedChainId}
         targetNetwork={targetNetwork}
       />
+      {cart && cart.length > 0 && route != "/funding" ? (
+        <Link
+          onClick={() => {
+            setRoute("/funding");
+          }}
+          style={{ color: "#FFF" }}
+          to="/funding"
+        >
+          <div
+            className="main fade-in"
+            style={{
+              zIndex: 1111,
+              position: "fixed",
+              right: 16,
+              bottom: 0,
+              backgroundColor: "#1890ff",
+              borderRadius: "8px 8px 0px 0px",
+              padding: 16,
+              fontSize: 32,
+            }}
+          >
+            <ShoppingCartOutlined /> Checkout [{cart.length} item{cart.length == 1 ? "" : "s"}]
+          </div>
+        </Link>
+      ) : (
+        ""
+      )}
       <Menu style={{ textAlign: "center" }} selectedKeys={[location.pathname]} mode="horizontal">
         <Menu.Item key="/">
           <Link to="/">App Home</Link>
@@ -197,6 +307,9 @@ function App(props) {
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <Home
+            cart={cart}
+            setCart={setCart}
+            displayCart={displayCart}
             tx={tx}
             address={address}
             localProvider={localProvider}
@@ -228,6 +341,75 @@ function App(props) {
             readContracts={readContracts}
             userProvider={userProvider}
           />
+        </Route>
+        <Route path="/funding">
+          <div style={{ marginTop: 64, borderBottom: "1px solid #eeeeee", paddingBottom: 64, marginBottom: 64 }}>
+            <div style={{ fontSize: 20, opacity: 0.777, fontWeight: "normal" }}>
+              <div style={{ marginTop: 8, marginBottom: 16 }}>
+                The <b>🏰 BuidlGuidl</b> is an Ethereum <b>public good</b>.
+              </div>
+              <div style={{ marginTop: 8, marginBottom: 16 }}>
+                We build <i>generic web3 components</i> to make creating web3 <b>products</b> easier.
+              </div>
+
+              <hr style={{ opacity: 0.1, marginBottom: 64 }} />
+              <div style={{ marginTop: 8, marginBottom: 64 }}>
+                Support the <b>🏰 BuidlGuidl</b>:
+              </div>
+
+              <Checkout
+                setRoute={setRoute}
+                cart={cart}
+                setCart={setCart}
+                displayCart={displayCart}
+                tx={tx}
+                writeContracts={writeContracts}
+                mainnetProvider={localProvider}
+              />
+
+              <hr style={{ opacity: 0.1, marginTop: 64 }} />
+
+              <div style={{ marginTop: 64 }}>
+                {cart && cart.length > 0 ? (
+                  <div style={{ padding: 8 }}>
+                    All funding is sent to ETH streams that flow to builders as they turn in work.
+                    <hr style={{ opacity: 0.1, marginTop: 64 }} />
+                  </div>
+                ) : (
+                  <div style={{ padding: 8 }}>
+                    🙏 All funding will go to developers mentored by{" "}
+                    <a href="https://twitter.com/austingriffith" target="_blank">
+                      @austingriffith
+                    </a>
+                    .
+                  </div>
+                )}
+                <div style={{ padding: 8 }}>
+                  In{" "}
+                  <a href="https://medium.com/@austin_48503/buidl-guidl-round-1-unaudited-4e1d9456e43d" target="_blank">
+                    version one
+                  </a>
+                  , we used{" "}
+                  <a href="https://support.buidlguidl.com/activity" target="_blank">
+                    quadratic matching
+                  </a>{" "}
+                  to fund a guild bank.
+                </div>
+                <div style={{ padding: 8 }}>
+                  Then, we streamed the ETH to builders! Check out{" "}
+                  <a href="https://bank.buidlguidl.com/streams" target="_blank">
+                    all the work
+                  </a>{" "}
+                  they turned in.
+                </div>
+                <div style={{ padding: 8 }}>
+                  <i>
+                    Think what we could do with <b>your</b> support!
+                  </i>
+                </div>
+              </div>
+            </div>
+          </div>
         </Route>
         <Route path="/whale/:nft">
           <WhalesUI

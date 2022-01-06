@@ -4,7 +4,7 @@ import DeployModal from "./DeployModal";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { PGCard } from "../components";
 
-function Home({ tx, writeContracts, address, readContracts, localProvider }) {
+function Home({ tx, writeContracts, address, readContracts, localProvider, cart, setCart }) {
   const [show, setShow] = useState(false);
 
   const pgs = (useEventListener(readContracts, "PGDeployer", "pgDeployed", localProvider, 1) || []).reverse();
@@ -31,6 +31,8 @@ function Home({ tx, writeContracts, address, readContracts, localProvider }) {
           renderItem={item => (
             <List.Item>
               <PGCard
+                cart={cart}
+                setCart={setCart}
                 token={item.args.token}
                 supply={item.args.supply.toString()}
                 pgType={item.args.pgtype.toString()}

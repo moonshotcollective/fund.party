@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Card } from "antd";
+import { Card, Col, Button, Row, notification } from "antd";
+import { ExperimentOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useRef } from "react";
 import { ethers } from "ethers";
 import { Address } from ".";
 
 const abi = ["function name() view returns (string memory)", "function symbol() view returns (string)"];
 
-export default function PGCard({ creator, token, supply, pgType, mainnetProvider, localProvider, ...props }) {
+export default function PGCard({
+  creator,
+  token,
+  supply,
+  pgType,
+  mainnetProvider,
+  localProvider,
+  setCart,
+  cart,
+  ...props
+}) {
   const [tokenDetails, setTokenDetails] = useState({});
 
   const fetchTokenData = async () => {
@@ -46,6 +57,29 @@ export default function PGCard({ creator, token, supply, pgType, mainnetProvider
         >
           Fund It 🐳
         </Link>
+        <Row>
+          <Col span={12}>
+            <Button
+              size="large"
+              onClick={() => {
+                //window.open(item.branch)
+                let copy = {};
+                copy.name = tokenDetails.name;
+                copy.address = token;
+                console.log(copy);
+                setCart([...cart, copy]);
+                notification.success({
+                  style: { marginBottom: 64 },
+                  message: "Added to cart!",
+                  placement: "bottomRight",
+                  description: <div style={{ fontSize: 22 }}>{token.name}</div>,
+                });
+              }}
+            >
+              <ExperimentOutlined /> Fund
+            </Button>
+          </Col>
+        </Row>
       </div>
       <div className="flex flex-row items-center mb-2">
         <span className="mr-3">Token Address: </span>

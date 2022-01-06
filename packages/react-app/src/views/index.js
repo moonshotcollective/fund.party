@@ -4,3 +4,4 @@ export { default as Hints } from "./Hints";
 export { default as Subgraph } from "./Subgraph";
 export { default as ViewNFT } from "./ViewNFT";
 export { default as WhalesUI } from "./WhalesUI";
+export { default as Checkout } from "./Checkout";
