@@ -10,7 +10,7 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
   const pgs = (useEventListener(readContracts, "PGDeployer", "pgDeployed", localProvider, 1) || []).reverse();
 
   return (
-    <div className="mt-20 pb-20 container mx-auto">
+    <div className="mt-5 pb-20 container mx-auto">
       <DeployModal
         tx={tx}
         writeContracts={writeContracts}
@@ -19,11 +19,11 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
         onCancel={() => setShow(false)}
       />
 
-      <div className="flex flex-1 justify-end">
+      <div className="flex flex-1 justify-center">
         <Button onClick={() => setShow(true)}>Create Public Good</Button>
       </div>
 
-      <div className="flex flex-1 mt-20 w-full">
+      <div className="flex flex-1 mt-5 w-full">
         <List
           className="w-full"
           grid={{ gutter: 16, column: 3 }}

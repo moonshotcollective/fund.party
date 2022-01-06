@@ -295,9 +295,6 @@ function App(props) {
         ""
       )}
       <Menu style={{ textAlign: "center" }} selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/">
-          <Link to="/">App Home</Link>
-        </Menu.Item>
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
         </Menu.Item>
@@ -429,11 +426,11 @@ function App(props) {
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
         <div style={{ display: "flex", flex: 1, alignItems: "center" }}>
           <div style={{ marginRight: 20 }}>
-            <NetworkSwitch
+            {/* <NetworkSwitch
               networkOptions={networkOptions}
               selectedNetwork={selectedNetwork}
               setSelectedNetwork={setSelectedNetwork}
-            />
+            /> */}
           </div>
           <Account
             address={address}

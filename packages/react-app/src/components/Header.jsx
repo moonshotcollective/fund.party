@@ -6,11 +6,7 @@ import React from "react";
 export default function Header() {
   return (
     <a href="/" rel="noopener noreferrer">
-      <PageHeader
-        title="🤑 Fund.Party"
-        subTitle="Create public goods that support retroactive funding"
-        style={{ cursor: "pointer" }}
-      />
+      <PageHeader title="🤑 Fund.Party" subTitle="" style={{ cursor: "pointer" }} />
     </a>
   );
 }
