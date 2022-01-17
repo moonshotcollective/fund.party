@@ -1,13 +1,23 @@
 import React, { useState } from "react";
-import { Button, List } from "antd";
+import { Button, List, Input } from "antd";
 import DeployModal from "./DeployModal";
 import { useEventListener } from "eth-hooks/events/useEventListener";
+import { formatEther, parseEther } from "@ethersproject/units";
 import { PGCard } from "../components";
 
 function Home({ tx, writeContracts, address, readContracts, localProvider, cart, setCart }) {
   const [show, setShow] = useState(false);
+  const [q, setQ] = useState("");
 
   const pgs = (useEventListener(readContracts, "PGDeployer", "pgDeployed", localProvider, 1) || []).reverse();
+
+  const fundProjects = async () => {
+    tx(
+      writeContracts.PGDeployer.fundProjects({
+        value: parseEther(q),
+      }),
+    );
+  };
 
   return (
     <div className="mt-5 pb-20 container mx-auto">
@@ -21,6 +31,17 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
 
       <div className="flex flex-1 justify-center">
         <Button onClick={() => setShow(true)}>Create Public Good</Button>
+        <Input
+          type="number"
+          placeholder="Fund all Projects with 'x' ETH"
+          id="quantity"
+          style={{ flex: 2 }}
+          value={q}
+          onChange={e => setQ(e.target.value)}
+        />
+        <Button disabled={q === ""} onClick={fundProjects}>
+          Deposit
+        </Button>
       </div>
 
       <div className="flex flex-1 mt-5 w-full">

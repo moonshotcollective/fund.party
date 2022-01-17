@@ -23,6 +23,13 @@ contract PGDeployer is Ownable {
     );
     event pgerc20Deployed(address indexed token);
     event pgerc721Deployed(address indexed token, uint256 totalSupply);
+    event FundProjects(
+        address indexed sender,
+        uint256 amount,
+        address[] streams
+    );
+
+    address[] public projects;
 
     function deployERC20(
         address tokenOwner,
@@ -66,7 +73,23 @@ contract PGDeployer is Ownable {
         // transfer token to owner
         token.transferOwnership(admin);
 
+        projects.push(address(token));
+
         // emit event
         emit pgDeployed(address(token), msg.sender, pgType.erc721, maxSupply);
+    }
+
+    function fundProjects() public payable {
+        require(projects.length > 0, "no projects");
+        require(msg.value > 0.001 ether, "not worth the gas");
+        for (uint8 a = 0; a < projects.length; a++) {
+            //thisProject = projects[a];
+            (bool success, ) = projects[a].call{
+                value: msg.value / projects.length,
+                gas: 150000
+            }("");
+            require(success, "could not send");
+        }
+        emit FundProjects(msg.sender, msg.value, projects);
     }
 }

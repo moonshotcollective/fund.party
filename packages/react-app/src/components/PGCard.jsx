@@ -32,11 +32,11 @@ export default function PGCard({
     const contract = new ethers.Contract(token, abi, localProvider);
     const name = await contract.name();
     const symbol = await contract.symbol();
-    const uri = await contract.tokenURI("2");
-    const metadata = await axios.get(uri);
+    //const uri = await contract.tokenURI("2");
+    //const metadata = await axios.get(uri);
 
-    setTokenDetails({ name, symbol, metadata });
-    console.log(metadata.data.image);
+    setTokenDetails({ name, symbol });
+    //console.log(metadata.data.image);
   };
 
   useEffect(() => {
@@ -47,7 +47,6 @@ export default function PGCard({
   return (
     <Card title={`${pgType === "0" ? "Token" : "NFT"}: ${tokenDetails.name} ($${tokenDetails.symbol})`}>
       <div className="flex flex-row items-center mb-2">
-        {tokenDetails.metadata && <Image preview={false} width={80} src={tokenDetails.metadata.data.image} />}
         <span className="ml-3 mr-1">Supply: </span>
         <span>{supply}</span>
       </div>
