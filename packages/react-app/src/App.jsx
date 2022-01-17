@@ -29,7 +29,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ViewNFT, WhalesUI, Checkout } from "./views";
+import { Home, ViewNFT, WhalesUI, Checkout, Funding } from "./views";
 import { useStaticJsonRPC, useLocalStorage } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -295,8 +295,14 @@ function App(props) {
         ""
       )}
       <Menu style={{ textAlign: "center" }} selectedKeys={[location.pathname]} mode="horizontal">
+        <Menu.Item key="/">
+          <Link to="/">Home</Link>
+        </Menu.Item>
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
+        </Menu.Item>
+        <Menu.Item key="/funding">
+          <Link to="/funding">Funding (cart)</Link>
         </Menu.Item>
       </Menu>
 
@@ -340,73 +346,19 @@ function App(props) {
           />
         </Route>
         <Route path="/funding">
-          <div style={{ marginTop: 64, borderBottom: "1px solid #eeeeee", paddingBottom: 64, marginBottom: 64 }}>
-            <div style={{ fontSize: 20, opacity: 0.777, fontWeight: "normal" }}>
-              <div style={{ marginTop: 8, marginBottom: 16 }}>
-                The <b>🏰 BuidlGuidl</b> is an Ethereum <b>public good</b>.
-              </div>
-              <div style={{ marginTop: 8, marginBottom: 16 }}>
-                We build <i>generic web3 components</i> to make creating web3 <b>products</b> easier.
-              </div>
-
-              <hr style={{ opacity: 0.1, marginBottom: 64 }} />
-              <div style={{ marginTop: 8, marginBottom: 64 }}>
-                Support the <b>🏰 BuidlGuidl</b>:
-              </div>
-
-              <Checkout
-                setRoute={setRoute}
-                cart={cart}
-                setCart={setCart}
-                displayCart={displayCart}
-                tx={tx}
-                writeContracts={writeContracts}
-                mainnetProvider={localProvider}
-              />
-
-              <hr style={{ opacity: 0.1, marginTop: 64 }} />
-
-              <div style={{ marginTop: 64 }}>
-                {cart && cart.length > 0 ? (
-                  <div style={{ padding: 8 }}>
-                    All funding is sent to ETH streams that flow to builders as they turn in work.
-                    <hr style={{ opacity: 0.1, marginTop: 64 }} />
-                  </div>
-                ) : (
-                  <div style={{ padding: 8 }}>
-                    🙏 All funding will go to developers mentored by{" "}
-                    <a href="https://twitter.com/austingriffith" target="_blank">
-                      @austingriffith
-                    </a>
-                    .
-                  </div>
-                )}
-                <div style={{ padding: 8 }}>
-                  In{" "}
-                  <a href="https://medium.com/@austin_48503/buidl-guidl-round-1-unaudited-4e1d9456e43d" target="_blank">
-                    version one
-                  </a>
-                  , we used{" "}
-                  <a href="https://support.buidlguidl.com/activity" target="_blank">
-                    quadratic matching
-                  </a>{" "}
-                  to fund a guild bank.
-                </div>
-                <div style={{ padding: 8 }}>
-                  Then, we streamed the ETH to builders! Check out{" "}
-                  <a href="https://bank.buidlguidl.com/streams" target="_blank">
-                    all the work
-                  </a>{" "}
-                  they turned in.
-                </div>
-                <div style={{ padding: 8 }}>
-                  <i>
-                    Think what we could do with <b>your</b> support!
-                  </i>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Funding
+            setRoute={setRoute}
+            cart={cart}
+            setCart={setCart}
+            displayCart={displayCart}
+            tx={tx}
+            address={address}
+            localProvider={localProvider}
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            mainnetProvider={mainnetProvider}
+            yourLocalBalance={yourLocalBalance}
+          />
         </Route>
         <Route path="/whale/:nft">
           <WhalesUI

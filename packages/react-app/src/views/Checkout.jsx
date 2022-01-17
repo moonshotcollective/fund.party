@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 
 export default function Checkout({ setRoute, cart, setCart, displayCart, tx, writeContracts, mainnetProvider }) {
   const [newPurpose, setNewPurpose] = useState("loading...");
+  const [q, setQ] = useState("");
 
   let history = useHistory();
 
@@ -22,6 +23,14 @@ export default function Checkout({ setRoute, cart, setCart, displayCart, tx, wri
 
   const [thanks, setThanks] = useState();
 
+  const fundProjects = async () => {
+    tx(
+      writeContracts.PGDeployer.fundProjects({
+        value: parseEther(q),
+      }),
+    );
+  };
+
   if (thanks) {
     return (
       <div>
@@ -33,6 +42,18 @@ export default function Checkout({ setRoute, cart, setCart, displayCart, tx, wri
   return (
     <div>
       <div style={{ width: "calc(max(min(80vw,800px),300px))", margin: "auto" }}>
+        <Input
+          type="number"
+          placeholder="Fund all Projects with 'x' ETH"
+          id="quantity"
+          style={{ flex: 2 }}
+          value={q}
+          onChange={e => setQ(e.target.value)}
+        />
+        <Button disabled={q === ""} onClick={fundProjects} style={{ marginBottom: 40 }}>
+          Deposit
+        </Button>
+
         {cart && cart.length > 0 ? (
           <StackGrid columnWidth={250}>{displayCart}</StackGrid>
         ) : (
@@ -148,8 +169,19 @@ export default function Checkout({ setRoute, cart, setCart, displayCart, tx, wri
 
                 overrides.value = parseEther("" + amount);
 
-                let result = tx(writeContracts.StreamFunder.fundStreams(finalAddresses, finalReasons, overrides));
+                let result = tx(
+                  writeContracts.PGDeployer.fundSelectedProjects(finalAddresses, {
+                    value: parseEther(amount),
+                  }),
+                );
 
+                /* const fundProjects = async () => {
+                  tx(
+                    writeContracts.PGDeployer.fundSelectedProjects(finalAddresses, {
+                      value: parseEther(amount),
+                    }),
+                  );
+                }; */
                 let finalResult = await result;
                 console.log("RESULTTTT:", finalResult);
 
@@ -177,9 +209,6 @@ export default function Checkout({ setRoute, cart, setCart, displayCart, tx, wri
                         >
                           {displayCart}
                         </StackGrid>
-                      </div>
-                      <div style={{ fontSize: 22, marginTop: 32, opacity: 0.5 }}>
-                        <Spin /> redirecting to funders page...
                       </div>
                     </div>,
                   );

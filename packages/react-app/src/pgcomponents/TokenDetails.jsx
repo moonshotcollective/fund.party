@@ -100,8 +100,8 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                 getLinks={getLinks}
                 autoComplete="off"
               >
-                <Form.Item name="uri" label="CID">
-                  <Input onChange={e => setUserURI2(e.target.value)} placeholder="input placeholder" />
+                <Form.Item className="w-full" name="uri" label="CID">
+                  <Input onChange={e => setUserURI2(e.target.value)} placeholder="Enter an ipfs directory CID" />
                 </Form.Item>
                 <Form.Item>
                   <Button onClick={getLinks}>Submit</Button>

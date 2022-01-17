@@ -28,6 +28,11 @@ contract PGDeployer is Ownable {
         uint256 amount,
         address[] streams
     );
+    event FundSelected(
+        address indexed sender,
+        uint256 amount,
+        address[] selected
+    );
 
     address[] public projects;
 
@@ -83,7 +88,6 @@ contract PGDeployer is Ownable {
         require(projects.length > 0, "no projects");
         require(msg.value > 0.001 ether, "not worth the gas");
         for (uint8 a = 0; a < projects.length; a++) {
-            //thisProject = projects[a];
             (bool success, ) = projects[a].call{
                 value: msg.value / projects.length,
                 gas: 150000
@@ -91,5 +95,18 @@ contract PGDeployer is Ownable {
             require(success, "could not send");
         }
         emit FundProjects(msg.sender, msg.value, projects);
+    }
+
+    function fundSelectedProjects(address[] memory selected) public payable {
+        require(selected.length > 0, "no projects");
+        require(msg.value > 0.001 ether, "not worth the gas");
+        for (uint8 a = 0; a < selected.length; a++) {
+            (bool success, ) = selected[a].call{
+                value: msg.value / selected.length,
+                gas: 150000
+            }("");
+            require(success, "could not send");
+        }
+        emit FundSelected(msg.sender, msg.value, selected);
     }
 }
