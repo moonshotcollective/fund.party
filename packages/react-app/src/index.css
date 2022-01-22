@@ -8,6 +8,6 @@
   font-family: "Inter", sans-serif;
 }
 
-.ant-modal-close {
+/* .ant-modal-close {
   @apply absolute -top-16 -right-16 rounded-full flex text-gray-800 bg-gray-500 !important;
-}
+} */

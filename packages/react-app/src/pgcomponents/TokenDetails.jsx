@@ -1,54 +1,134 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, InputNumber, Space, Spin } from "antd";
 import { create, urlSource } from "ipfs-http-client";
+import axios from "axios";
 
 //phunk CID QmQcoXyYKokyBHzN3yxDYgPP25cmZkm5Gqp5bzZsTDF7cd
 
+const erc721Fields = ["inflation", "name", "owner", "preview", "startPrice", "symbol", "cid"];
+
 function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handleDeployment, ...props }) {
-  const [files, setFiles] = useState([]);
-  const [URI, setURI] = useState();
-  const [userURI2, setUserURI2] = useState();
   const [form] = Form.useForm();
-  const [requiredMark, setRequiredMarkType] = useState("optional");
+  const [validness, setValidness] = useState(false);
 
-  const onRequiredTypeChange = ({ requiredMarkValue }) => {
-    setRequiredMarkType(requiredMarkValue);
-  };
-
-  async function getLinks(ipfsPath) {
-    const url = "https://dweb.link/api/v0";
-    const ipfs = create({ url });
-
-    const links = [];
-    for await (const link of ipfs.ls(userURI2)) {
-      links.push(link);
-    }
-    console.log(links);
-    const fileNames = [];
-
-    for (let x = 0; x < links.length; x++) {
-      fileNames.push(links[x].name);
-    }
-    //console.log(ipfsPath);
-    setURI(`http://ipfs.io/ipfs/${userURI2}/`);
-    setFiles(fileNames);
-    console.log(fileNames);
-    form.setFieldsValue({ userURIs: fileNames });
-    form.setFieldsValue({ totalSupply: fileNames.length.toString() });
-  }
+  const [previewDetails, setPreviewDetails] = useState({
+    preview: "",
+    valid: false,
+  });
+  const [cidDetails, setCidDetails] = useState({
+    cid: "",
+    valid: false,
+    loading: false,
+    userURIs: [],
+    baseURI: "",
+    totalSupply: "",
+  });
 
   const validateAndContinue = async () => {
-    //files.forEach(element => uris.push(element.path));
-    form.setFieldsValue({ baseURI: `http://ipfs.io/ipfs/${userURI2}/` });
-
     const values = form.getFieldsValue();
-    // TODO: run validation and then continue
 
-    setPgData(values);
+    setPgData({
+      ...values,
+      baseURI: cidDetails.baseURI,
+      userURIs: cidDetails.userURIs,
+      totalSupply: cidDetails.totalSupply,
+    });
+
     onNextStep();
   };
 
   const isERC20 = pgType === 1;
+
+  const checkValidness = () => {
+    if (isERC20) return true;
+
+    const values = form.getFieldsValue();
+    const errors = form.getFieldsError();
+
+    for (const error of errors) {
+      if (error.errors.length > 0) {
+        return false;
+      }
+    }
+    for (const field of erc721Fields) {
+      if (values[field] === undefined) {
+        return false;
+      }
+    }
+    if (!previewDetails.valid) return false;
+    if (!cidDetails.valid) return false;
+
+    return true;
+  };
+
+  useEffect(() => {
+    const checkPreviewImage = async () => {
+      if (!previewDetails.preview) {
+        return setPreviewDetails(old => ({ ...old, valid: false }));
+      }
+
+      if (form.getFieldError("preview").length > 0) {
+        return setPreviewDetails(old => ({ ...old, valid: false }));
+      }
+      try {
+        const data = await axios.get(previewDetails.preview);
+        console.log("fetched image", data.headers);
+        if (
+          data.headers["content-type"].includes("png") ||
+          data.headers["content-type"].includes("jpg") ||
+          data.headers["content-type"].includes("jpeg")
+        ) {
+          return setPreviewDetails(old => ({ ...old, valid: true }));
+        }
+        setPreviewDetails(old => ({ ...old, valid: false }));
+      } catch {
+        setPreviewDetails(old => ({ ...old, valid: false }));
+      }
+    };
+
+    checkPreviewImage();
+  }, [previewDetails.preview]);
+
+  useEffect(() => {
+    const checkCid = async () => {
+      if (cidDetails.cid.length != 46) {
+        return setCidDetails(old => ({ ...old, valid: false }));
+      }
+      setCidDetails(old => ({ ...old, loading: true }));
+
+      const url = "https://dweb.link/api/v0";
+      const ipfs = create({ url });
+
+      const links = [];
+      try {
+        for await (const link of ipfs.ls(cidDetails.cid)) {
+          links.push(link);
+        }
+      } catch {
+        return setCidDetails(old => ({ ...old, valid: false, loading: false }));
+      }
+      const fileNames = [];
+
+      for (let x = 0; x < links.length; x++) {
+        fileNames.push(links[x].name);
+      }
+
+      setCidDetails(old => ({
+        ...old,
+        valid: true,
+        loading: false,
+        userURIs: fileNames,
+        totalSupply: fileNames.length.toString(),
+        baseURI: `http://ipfs.io/ipfs/${cidDetails.cid}/`,
+      }));
+    };
+
+    checkCid();
+  }, [cidDetails.cid]);
+
+  useEffect(() => {
+    setValidness(checkValidness());
+  }, [cidDetails, previewDetails]);
 
   return (
     <div>
@@ -59,13 +139,15 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
         <div className="my-2">Some more description on what details are needed to launch the token.</div>
       </div>
 
-      <div className="flex flex-1 flex-col items-center justify-center mx-auto mt-16 max-w-lg">
+      <div className="flex flex-1 flex-col items-center justify-center mx-auto mt-10 max-w-lg">
         <Form
           form={form}
+          onChange={() => {
+            setValidness(checkValidness());
+          }}
           className="w-full flex flex-col items-center mx-auto justify-center"
           layout="vertical"
           initialValues={{
-            requiredMarkValue: requiredMark,
             name: pgData.name,
             symbol: pgData.symbol,
             totalSupply: pgData.totalSupply,
@@ -75,15 +157,29 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
             owner: pgData.owner,
             userURIs: pgData.uris,
             inflation: pgData.inflation,
+            preview: pgData.preview,
+            cid: pgData.cid,
           }}
           size="large"
-          onValuesChange={onRequiredTypeChange}
-          requiredMark={requiredMark}
         >
-          <Form.Item label="Project Name" name="name" required tooltip="This is a required field" className="w-full">
+          <Form.Item
+            label="Project name"
+            name="name"
+            required
+            tooltip="Name of your public good"
+            className="w-full"
+            rules={[{ required: true }, { type: "string", min: 6 }]}
+          >
             <Input placeholder="Simple Public Goods Project" />
           </Form.Item>
-          <Form.Item label="Symbol" name="symbol" tooltip="Tooltip with customize icon" className="w-full">
+          <Form.Item
+            label="Symbol"
+            name="symbol"
+            tooltip="Symbol is a short name for your public good's token"
+            className="w-full"
+            required
+            rules={[{ required: true }, { type: "string", min: 3 }]}
+          >
             <Input placeholder="SPGP" />
           </Form.Item>
 
@@ -93,76 +189,93 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
             </Form.Item>
           ) : (
             <>
-              <Form
-                size="large"
-                className="w-full flex flex-col items-center mx-auto justify-center"
-                layout="vertical"
-                getLinks={getLinks}
-                autoComplete="off"
-              >
-                <Form.Item className="w-full" name="uri" label="CID">
-                  <Input onChange={e => setUserURI2(e.target.value)} placeholder="Enter an ipfs directory CID" />
-                </Form.Item>
-                <Form.Item>
-                  <Button onClick={getLinks}>Submit</Button>
-                </Form.Item>
-              </Form>
-              <div className="text-center"></div>
               <Form.Item
-                label="Total Supply"
-                name="totalSupply"
+                label="Owner address"
+                name="owner"
                 required
-                tooltip="Equal to # of JSONs"
+                tooltip="Address of Owner"
                 className="w-full"
-                display="none"
+                rules={[{ required: true }, { type: "string", len: 42 }]}
               >
-                {files.length}
-              </Form.Item>
-              <Form.Item label="Token uris" name="userURIs" required tooltip="" className="w-full">
-                {files.length}
-              </Form.Item>
-              <Form.Item label="Base URI" name="baseURI" required tooltip="Base URI info" className="w-full">
-                {URI && (
-                  <div className="flex flex-1 flex-row mb-2">
-                    <div className="truncate max-w-sm">
-                      <a href={URI} target="_blank">
-                        {URI}
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </Form.Item>
-              <Form.Item label="Owner Address" name="owner" required tooltip="Address of Owner" className="w-full">
                 <Input placeholder="0x..." />
               </Form.Item>
               <Form.Item
                 label="Start mint price"
                 name="startPrice"
                 required
-                tooltip="Start price info"
+                tooltip="Start price in ETH"
                 className="w-full"
+                rules={[{ type: "number", min: 0, max: 100 }]}
               >
-                <Input type="number" placeholder="0.03" addonAfter={<span>Ξ</span>} />
+                <InputNumber placeholder="0.03Ξ" style={{ width: "100%" }} />
               </Form.Item>
               <Form.Item
                 label="Price inflation rate"
                 name="inflation"
                 required
-                tooltip="Price inflation rate info"
+                tooltip="Price inflation rate in percents"
                 className="w-full"
+                rules={[{ type: "number", min: 0, max: 100 }]}
               >
-                <Input type="number" placeholder="3" min={1} max={100} addonAfter={<span>%</span>} />
+                <InputNumber placeholder="3%" style={{ width: "100%" }} />
               </Form.Item>
+              <Form.Item
+                label="Preview image"
+                name="preview"
+                required
+                tooltip="Preview image for your ERC721 collection (PNG or JPEG)"
+                className="block w-full"
+                rules={[{ required: true }, { type: "url", warningOnly: true }, { type: "string", min: 6 }]}
+              >
+                <Input
+                  placeholder="https://imgur.com/nft.png"
+                  className="block"
+                  onChange={e =>
+                    setPreviewDetails({
+                      preview: e.target.value,
+                      valid: true,
+                    })
+                  }
+                />
+              </Form.Item>
+              {previewDetails.valid ? <img src={previewDetails.preview} className="mb-5" alt="Preview" /> : null}
+              <Form.Item
+                className="w-full"
+                name="cid"
+                label="CID"
+                required
+                tooltip="IPFS CID to fetch information about your collection"
+                rules={[{ required: true, len: 46 }]}
+              >
+                <Input
+                  onChange={e => {
+                    setCidDetails(old => ({ ...old, cid: e.target.value }));
+                  }}
+                  placeholder="QmQcoXyYKokyBHzN3yd..."
+                />
+              </Form.Item>
+              {cidDetails.valid && (
+                <div className="mr-auto p-0 m-0" style={{ marginTop: "-10px" }}>
+                  <p className="p-0 m-0">Total supply: {cidDetails.totalSupply}</p>
+                  <p className="p-0 m-0">
+                    Base URI:{" "}
+                    <a href={cidDetails.baseURI} target="_blank">
+                      Click
+                    </a>
+                  </p>
+                </div>
+              )}
+              {cidDetails.loading && <Spin />}
             </>
           )}
         </Form>
 
-        <div className="mt-20 flex flex-1 items-center justify-center flex-row">
+        <div className="mt-10 flex flex-1 items-center justify-center flex-row">
           <Button size="large" onClick={onPreviousStep}>
             Go Back
           </Button>
           <div className="w-4" />
-          <Button type="primary" size="large" onClick={validateAndContinue}>
+          <Button type="primary" size="large" onClick={validateAndContinue} htmlType="submit" disabled={!validness}>
             Confirm token details
           </Button>
         </div>

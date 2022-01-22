@@ -149,6 +149,7 @@ function App(props) {
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider, contractConfig);
+  console.log("readContracts", readContracts, contractConfig, localProvider);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
@@ -195,65 +196,29 @@ function App(props) {
   if (cart && cart.length > 0) {
     for (let c in cart) {
       console.log("CART ITEM", c, cart[c]);
-      if (!cart[c].streamAddress) {
-        displayCart.push(
-          <div key={c} style={{ padding: 22, border: "1px solid #dddddd", borderRadius: 8 }}>
-            <div style={{ marginLeft: 32 }}>
-              <div style={{ float: "right", zIndex: 2 }}>
-                <Button
-                  borderless={true}
-                  onClick={() => {
-                    console.log("REMOVE ", c, cart[c]);
-                    let update = [];
-                    for (let x in cart) {
-                      if (cart[c].id != cart[x].id) {
-                        update.push(cart[x]);
-                      }
-                    }
-                    console.log("update", update);
-                    setCart(update);
-                  }}
-                >
-                  x
-                </Button>
-              </div>
-              <div style={{ fontSize: 18, marginLeft: "auto" }}>{cart[c].name}</div>
-            </div>
-          </div>,
-        );
-      } else {
-        displayCart.push(
-          <div key={c} style={{ padding: 16, border: "1px solid #dddddd", borderRadius: 8 }}>
-            <div style={{ marginLeft: 32 }}>
-              <div style={{ float: "right", zIndex: 2 }}>
-                <Button
-                  onClick={() => {
-                    console.log("REMOVE ", c, cart[c]);
-                    let update = [];
-                    for (let x in cart) {
-                      if (cart[c].id != cart[x].id) {
-                        update.push(cart[x]);
-                      }
-                    }
-                    console.log("update", update);
-                    setCart(update);
-                  }}
-                >
-                  x
-                </Button>
-              </div>
-              <Address
-                hideCopy={true}
-                punkBlockie={true}
-                fontSize={18}
-                address={cart[c].address}
-                ensProvider={mainnetProvider}
-                blockExplorer={blockExplorer}
-              />
-            </div>
-          </div>,
-        );
-      }
+      displayCart.push(
+        <div
+          key={c}
+          style={{ border: "1px solid #dddddd", borderRadius: 8 }}
+          className="flex items-center px-4 py-2 justify-between"
+        >
+          <div style={{ fontSize: 15 }}>{cart[c].name}</div>
+          <Button
+            borderless={true}
+            onClick={() => {
+              console.log(
+                "cart delete",
+                cart,
+                c,
+                cart.filter(x => x.address !== cart[c].address),
+              );
+              setCart(cart => cart.filter(x => x.address !== cart[c].address));
+            }}
+          >
+            x
+          </Button>
+        </div>,
+      );
     }
   }
 
@@ -267,7 +232,7 @@ function App(props) {
         selectedChainId={selectedChainId}
         targetNetwork={targetNetwork}
       />
-      {cart && cart.length > 0 && route != "/funding" ? (
+      {cart && cart.length > 0 && location.pathname != "/funding" ? (
         <Link
           onClick={() => {
             setRoute("/funding");
@@ -276,7 +241,6 @@ function App(props) {
           to="/funding"
         >
           <div
-            className="main fade-in"
             style={{
               zIndex: 1111,
               position: "fixed",
@@ -301,8 +265,10 @@ function App(props) {
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
         </Menu.Item>
-        <Menu.Item key="/funding">
-          <Link to="/funding">Funding (cart)</Link>
+        <Menu.Item key="/funding" onClick={() => setRoute("/funding")}>
+          <Link to="/funding" onClick={() => setRoute("/funding")}>
+            Funding (cart)
+          </Link>
         </Menu.Item>
       </Menu>
 
@@ -320,6 +286,8 @@ function App(props) {
             writeContracts={writeContracts}
             mainnetProvider={mainnetProvider}
             yourLocalBalance={yourLocalBalance}
+            userSigner={userSigner}
+            userProvider={userProvider}
           />
         </Route>
         <Route exact path="/debug">

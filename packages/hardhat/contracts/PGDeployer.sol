@@ -61,7 +61,8 @@ contract PGDeployer is Ownable {
         uint256 basePrice,
         uint256 curve,
         string memory base,
-        string[] memory uris
+        string[] memory uris,
+        string memory previewURI
     ) public {
         // deploy new token
         PGERC721 token = new PGERC721(
@@ -72,7 +73,8 @@ contract PGDeployer is Ownable {
             basePrice,
             curve,
             base,
-            uris
+            uris,
+            previewURI
         );
 
         // transfer token to owner
