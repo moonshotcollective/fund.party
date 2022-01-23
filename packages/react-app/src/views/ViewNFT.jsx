@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "antd";
-import { ethers, utils } from "ethers";
+import React, { useState, useEffect, useMemo } from "react";
+import { Spin, Button, Card } from "antd";
+import { Contract, ethers, utils } from "ethers";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
-import { formatEther } from "@ethersproject/units";
+import { formatEther, parseEther } from "@ethersproject/units";
 import { usePoller } from "eth-hooks";
 import { NFTABI } from "../contracts/nftabi.js";
 import { useExternalContractLoader } from "../hooks";
 import { useParams, Link } from "react-router-dom";
+import classNames from "classnames";
 
 const ViewNFT = ({
   loadWeb3Modal,
@@ -19,49 +21,57 @@ const ViewNFT = ({
   localChainId,
   address,
   userProvider,
+  injectedProvider,
 }) => {
-  const [collection, setCollection] = useState({
-    loading: true,
-    items: [],
-  });
-  const [floor, setFloor] = useState("0.0");
-  const [supply, setSupply] = useState();
-  const [limit, setLimit] = useState();
-  const [nftPrice, setNFTPrice] = useState();
+  const history = useHistory();
+  let { nft: nftAddress } = useParams();
+  const [nftInfo, setNftInfo] = useState(null);
+  const [collection, setCollection] = useState({ loading: true, items: null });
 
-  let { nft } = useParams();
+  const nftContract = useMemo(() => {
+    if (!nftAddress || !userSigner) return null;
+    return new Contract(nftAddress, NFTABI, userSigner);
+  }, [nftAddress, userSigner]);
 
-  const NFT = useExternalContractLoader(userProvider, nft, NFTABI);
+  const fetchNFTInfo = async () => {
+    if (!address || !nftContract) return;
+    const requests = [
+      nftContract.price(),
+      nftContract.floor(),
+      nftContract.currentToken(),
+      nftContract.limit(),
+      nftContract.name(),
+      nftContract.previewURI(),
+    ];
+    const responses = await Promise.all(requests);
 
-  usePoller(async () => {
-    if (NFT && address) {
-      const nftNowPrice = await NFT.price();
-      const floorPrice = await NFT.floor();
-      const supply = await NFT.currentToken();
-      const limit = await NFT.limit();
-      setSupply(formatEther(supply));
-      setLimit(formatEther(limit));
-      setFloor(formatEther(floorPrice));
-      setNFTPrice(nftNowPrice);
-    }
-  }, 1500);
+    setNftInfo({
+      price: formatEther(responses[0]),
+      floor: formatEther(responses[1]),
+      supply: responses[2].toNumber(),
+      limit: responses[3].toNumber(),
+      name: responses[4],
+      preview: responses[5],
+    });
+  };
 
   const getTokenURI = async (address, index) => {
-    const id = await NFT.tokenOfOwnerByIndex(address, index);
-    const tokenURI = await NFT.tokenURI(id);
+    const id = await nftContract.tokenOfOwnerByIndex(address, index);
+    const tokenURI = await nftContract.tokenURI(id);
     const metadata = await axios.get(tokenURI);
-    const approved = await NFT.getApproved(id);
-    const contractName = await NFT.name();
-    return { ...metadata.data, id, tokenURI, approved: approved === NFT.address, contractName };
+    const approved = await nftContract.getApproved(id);
+    const contractName = await nftContract.name();
+    return { ...metadata.data, id, tokenURI, approved: approved === nftContract.address, contractName };
   };
 
   const loadCollection = async () => {
-    if (!address || !NFT) return;
+    if (!address || !nftContract) return;
+
     setCollection({
       loading: true,
-      items: [],
+      items: null,
     });
-    const balance = (await NFT.balanceOf(address)).toNumber();
+    const balance = (await nftContract.balanceOf(address)).toNumber();
     const tokensPromises = [];
     for (let i = 0; i < balance; i += 1) {
       tokensPromises.push(getTokenURI(address, i));
@@ -75,104 +85,99 @@ const ViewNFT = ({
 
   const redeem = async id => {
     try {
-      const redeemTx = await tx(userSigner(NFT.redeem(id)));
+      const redeemTx = await tx(nftContract.redeem(id));
       await redeemTx.wait();
     } catch (e) {
       console.log("redeem tx error:", e);
     }
+    fetchNFTInfo();
     loadCollection();
   };
 
-  const approveForBurn = async id => {
+  const mintItem = async () => {
     try {
-      const approveTx = await tx(userSigner(NFT.approve(NFT.address, id)));
-      await approveTx.wait();
+      const txCur = await tx(
+        nftContract.mintItem({
+          value: parseEther(nftInfo.price),
+        }),
+      );
+      const txInfo = await txCur.wait();
+      console.log("txInfo", txInfo);
+      fetchNFTInfo();
+      loadCollection();
     } catch (e) {
-      console.log("Approve tx error:", e);
+      console.log("mint failed", e);
     }
-    loadCollection();
   };
+
+  const haveFunding = nftInfo && nftInfo.floor && parseEther(nftInfo.floor).gt(0);
 
   useEffect(() => {
-    if (NFT) loadCollection();
-  }, [address, NFT, NFT]);
+    fetchNFTInfo();
+    loadCollection();
+  }, [nftContract, address]);
 
   return (
-    <div style={{ maxWidth: 768, margin: "20px auto" }}>
-      {address ? (
-        <>
-          <div style={{ display: "row", margin: "0 auto" }}>
-            <div style={{ marginLeft: "20px" }}>
-              <Button
-                style={{ marginTop: 15 }}
-                type="primary"
-                disabled={supply >= limit}
-                onClick={async () => {
-                  const priceRightNow = await NFT.price();
-                  setNFTPrice(priceRightNow);
-                  try {
-                    /* const increaseFloor = async () => {
-                      tx(
-                        userSigner.sendTransaction({
-                          to: NFT.address,
-                          value: parseEther(q), */
-                    const txCur = await tx(
-                      NFT.mintItem({
-                        value: priceRightNow,
-                      }),
-                    );
-                    await txCur.wait();
-                  } catch (e) {
-                    console.log("mint failed", e);
-                  }
-                  loadCollection();
-                }}
-              >
-                MINT for Ξ{nftPrice && (+ethers.utils.formatEther(nftPrice)).toFixed(4)}
-              </Button>
-              <span className="ml-1 mr-1">or</span>
-              <Link
-                to={{
-                  pathname: `/whale/${nft}`,
-                }}
-              >
-                Fund It 🐳
-              </Link>
-            </div>
-            {collection.items.length === 0 && <p>Your collection is empty</p>}
-            {collection.items.length > 0 &&
-              collection.items.map(item => (
-                <div
-                  style={{
-                    border: "1px solid #cccccc",
-                    padding: 16,
-                    width: 380,
-                    margin: "auto",
-                    marginTop: 20,
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
-                >
-                  <img
-                    style={{ maxWidth: "150px", display: "block", margin: "0 auto", marginBottom: "10px" }}
-                    src={item.image}
-                    alt="Your NFT"
-                  />
-                  <div style={{ marginLeft: "20px" }}>
-                    <p style={{ textAlign: "center", marginTop: 15 }}>{item.name}</p>
-                    <Button style={{ width: "100%", minWidth: 100 }} onClick={() => redeem(item.id)}>
-                      Redeem for {floor.substr(0, 6)}
-                    </Button>
-                  </div>
-                </div>
-              ))}
+    <div className="max-w-xl mx-auto mt-6 px-4 lg:px-0 pb-10">
+      {!nftInfo && (
+        <div className="text-center">
+          <Spin />
+        </div>
+      )}
+      {nftInfo && (
+        <div>
+          <div className="mb-6">
+            <img src={nftInfo.preview} className="object-cover h-48 w-full" />
           </div>
-          <p style={{ textAlign: "center", marginTop: 15 }}>Current floor price = {floor.substr(0, 6)} ETH</p>
-        </>
-      ) : (
-        <Button key="loginbutton" type="primary" onClick={loadWeb3Modal}>
-          Connect to mint
-        </Button>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-2xl font-medium m-0">{nftInfo.name}</p>
+              <p className="m-0">Total supply: {nftInfo.limit}</p>
+            </div>
+            <div>
+              <Button onClick={() => history.push(`/whale/${nftAddress}`)}>Fund the project</Button>
+            </div>
+          </div>
+          <p className="text-xl font-medium mt-10">My collection</p>
+          {collection.loading && <Spin />}
+          {!collection.loading && collection.items && collection.items.length === 0 && (
+            <p className="m-0 p-0 -mt-4">Your collection is empty</p>
+          )}
+          {!collection.loading && collection.items && collection.items.length > 0 && (
+            <>
+              <div className="grid lg:grid-cols-3 gap-6 md:grid-cols-2 grid-cols-1">
+                {collection.items.map(item => (
+                  <div>
+                    <div
+                      className={classNames(
+                        "hover:opacity-80 transition-opacity cursor-pointer",
+                        !haveFunding && "cursor-not-allowed hover:opacity-100",
+                      )}
+                      onClick={haveFunding ? () => redeem(item.id) : null}
+                    >
+                      <img src={item.image} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {!haveFunding ? (
+                <div className="pt-6 pb-3">
+                  <p className="m-0">Current floor price is 0.0 because there was no funding yet.</p>
+                  <p className="m-0">You will be able to redeem your NFTs after initial funding.</p>
+                </div>
+              ) : (
+                <p className="m-0 pt-6 pb-3">
+                  Click on any of your NFTs to burn it for <b>{nftInfo.floor.substr(0, 6)}ETH</b>
+                </p>
+              )}
+            </>
+          )}
+          {!collection.loading && (
+            <Button type="primary" className="mt-2" disabled={nftInfo.supply === nftInfo.limit} onClick={mintItem}>
+              Mint for Ξ{nftInfo.price.substr(0, 5)}
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );

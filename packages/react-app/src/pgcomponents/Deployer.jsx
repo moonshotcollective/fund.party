@@ -74,36 +74,26 @@ function Details({
   };
 
   return (
-    <div className="text-center">
+    <div>
       <h1 className="text-2xl font-medium">Deploy variables</h1>
-      <div className="flex-1 justify-center mx-auto mt-10 max-w-lg">
+      <div className="mt-6 max-w-lg mx-auto">
         {pgData.name && (
-          <div className="flex flex-1 flex-row mb-2">
-            <div className="mr-2">Project Name:</div>
-            <div>
-              {pgData.name} ({pgData.symbol})
-            </div>
-          </div>
+          <p className="p-0 mb-1">
+            Project Name: {pgData.name} ({pgData.symbol})
+          </p>
         )}
-        {pgData.totalSupply && (
-          <div className="flex flex-1 flex-row mb-2">
-            <div className="mr-2">Max Total Supply:</div>
-            <div>{pgData.totalSupply}</div>
-          </div>
-        )}
-        {pgData.decimal && (
-          <div className="flex flex-1 flex-row mb-2">
-            <div className="mr-2">Token Decimal:</div>
-            <div>{pgData.decimal}</div>
-          </div>
-        )}
-        {pgData.inflation && (
-          <div className="flex flex-1 flex-row mb-2">
-            <div className="mr-2">Token Inflation Rate:</div>
-            <div>{pgData.inflation}</div>
-          </div>
-        )}
+        {pgData.name && <p className="p-0 mb-1">Total Supply: {pgData.totalSupply}</p>}
+        {pgData.decimal && <p className="p-0 mb-1">Token Decimal: {pgData.decimal}</p>}
+        {pgData.inflation && <p className="p-0 mb-1">Token Inflation Rate: {pgData.inflation}%</p>}
         {pgData.baseURI && (
+          <p className="p-0 m-0">
+            Token BaseURI:{" "}
+            <a href={pgData.baseURI} target="_blank">
+              Click
+            </a>
+          </p>
+        )}
+        {/* {pgData.baseURI && (
           <div className="flex flex-1 flex-row mb-2">
             <div className="mr-2 flex flex-nowrap">Token BaseURI:</div>
             <div className="truncate max-w-sm">
@@ -112,7 +102,7 @@ function Details({
               </a>
             </div>
           </div>
-        )}
+        )} */}
       </div>
       <div className="mt-12 flex flex-1 items-center justify-center flex-row">
         {!isDeploying && (

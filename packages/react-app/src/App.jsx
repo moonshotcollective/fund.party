@@ -311,6 +311,7 @@ function App(props) {
             localChainId={localChainId}
             readContracts={readContracts}
             userProvider={userProvider}
+            injectedProvider={injectedProvider}
           />
         </Route>
         <Route path="/funding">
