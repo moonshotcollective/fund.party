@@ -258,7 +258,7 @@ function App(props) {
       ) : (
         ""
       )}
-      <Menu style={{ textAlign: "center" }} selectedKeys={[location.pathname]} mode="horizontal">
+      <Menu style={{ textAlign: "center" }} selectedKeys={[location.pathname]} mode="horizontal" className="hidden">
         <Menu.Item key="/">
           <Link to="/">Home</Link>
         </Menu.Item>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Spin, Button, Card } from "antd";
+import { Input, Spin, Button, Card } from "antd";
 import { Contract, ethers, utils } from "ethers";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
@@ -27,6 +27,7 @@ const ViewNFT = ({
   let { nft: nftAddress } = useParams();
   const [nftInfo, setNftInfo] = useState(null);
   const [collection, setCollection] = useState({ loading: true, items: null });
+  const [q, setQ] = useState("");
 
   const nftContract = useMemo(() => {
     if (!nftAddress || !userSigner) return null;
@@ -110,6 +111,17 @@ const ViewNFT = ({
     }
   };
 
+  const increaseFloor = async () => {
+    const txCur = await tx(
+      userSigner.sendTransaction({
+        to: nftAddress,
+        value: parseEther(q),
+      }),
+    );
+    await txCur.wait();
+    fetchNFTInfo();
+  };
+
   const haveFunding = nftInfo && nftInfo.floor && parseEther(nftInfo.floor).gt(0);
 
   useEffect(() => {
@@ -134,8 +146,8 @@ const ViewNFT = ({
               <p className="text-2xl font-medium m-0">{nftInfo.name}</p>
               <p className="m-0">Total supply: {nftInfo.limit}</p>
             </div>
-            <div>
-              <Button onClick={() => history.push(`/whale/${nftAddress}`)}>Fund the project</Button>
+            <div className="text-right">
+              <Button onClick={() => (window.location.href = "https://opensea.io")}>OpenSea</Button>
             </div>
           </div>
           <p className="text-xl font-medium mt-10">My collection</p>
@@ -161,12 +173,12 @@ const ViewNFT = ({
                 ))}
               </div>
               {!haveFunding ? (
-                <div className="pt-6 pb-3">
+                <div className="pt-4 pb-1">
                   <p className="m-0">Current floor price is 0.0 because there was no funding yet.</p>
                   <p className="m-0">You will be able to redeem your NFTs after initial funding.</p>
                 </div>
               ) : (
-                <p className="m-0 pt-6 pb-3">
+                <p className="m-0 pt-4 pb-1">
                   Click on any of your NFTs to burn it for <b>{nftInfo.floor.substr(0, 6)}ETH</b>
                 </p>
               )}
@@ -177,6 +189,24 @@ const ViewNFT = ({
               Mint for Ξ{nftInfo.price.substr(0, 5)}
             </Button>
           )}
+          <p className="text-xl font-medium mt-10 p-0 mb-0">Fund the project</p>
+          <p className="m-0">
+            Current floor price: <b>{nftInfo.floor.substr(0, 6)}ETH</b>
+          </p>
+          <p className="m-0">You can support the project by donating some ETH to increase the floor price</p>
+          <div className="flex mt-4 max-w-sm">
+            <Input
+              type="number"
+              placeholder="1 ETH"
+              id="quantity"
+              style={{ flex: 2 }}
+              value={q}
+              onChange={e => setQ(e.target.value)}
+            />
+            <Button className="ml-3" disabled={!q} onClick={increaseFloor}>
+              Donate
+            </Button>
+          </div>
         </div>
       )}
     </div>

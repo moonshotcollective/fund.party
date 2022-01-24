@@ -97,7 +97,7 @@ export default function PGCard({
         >
           <ShoppingCartOutlined /> <p className="m-0 p-0">Fund</p>
         </Button>
-        <Button
+        {/* <Button
           className="flex-grow"
           style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
           size="large"
@@ -106,7 +106,7 @@ export default function PGCard({
           }}
         >
           <UpSquareOutlined /> <p className="m-0 p-0">RTF</p>
-        </Button>
+        </Button> */}
       </div>
       {/* <div className="flex flex-row items-center mb-2">
         <span className="mr-3">Token Address: </span>

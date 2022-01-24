@@ -62,6 +62,7 @@ function Details({
             parseFloat(update.gasPrice) / 1000000000 +
             " gwei",
           );
+          setIsDeploying(false);
         }
       });
       console.log("awaiting metamask/web3 confirm result...", result);
