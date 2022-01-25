@@ -30,8 +30,9 @@ const ViewNFT = ({
   const [q, setQ] = useState("");
 
   const nftContract = useMemo(() => {
-    if (!nftAddress || !userSigner) return null;
-    return new Contract(nftAddress, NFTABI, userSigner);
+    if (!nftAddress) return null;
+    if (userSigner) return new Contract(nftAddress, NFTABI, userSigner);
+    return new Contract(nftAddress, NFTABI, localProvider);
   }, [nftAddress, userSigner]);
 
   const fetchNFTInfo = async () => {
@@ -139,7 +140,7 @@ const ViewNFT = ({
       {nftInfo && (
         <div>
           <div className="mb-6">
-            <img src={nftInfo.preview} className="object-cover h-48 w-full" />
+            <img src={nftInfo.preview} className="object-cover h-48 w-full object-top" />
           </div>
           <div className="flex justify-between items-center">
             <div>
@@ -186,7 +187,12 @@ const ViewNFT = ({
             </>
           )}
           {!collection.loading && (
-            <Button type="primary" className="mt-2" disabled={nftInfo.supply === nftInfo.limit} onClick={mintItem}>
+            <Button
+              type="primary"
+              className="mt-2"
+              disabled={nftInfo.supply === nftInfo.limit || !userSigner}
+              onClick={mintItem}
+            >
               Mint for Ξ{nftInfo.price.substr(0, 5)}
             </Button>
           )}
@@ -204,7 +210,7 @@ const ViewNFT = ({
               value={q}
               onChange={e => setQ(e.target.value)}
             />
-            <Button className="ml-3" disabled={!q} onClick={increaseFloor}>
+            <Button className="ml-3" disabled={!q || !userSigner} onClick={increaseFloor}>
               Donate
             </Button>
           </div>

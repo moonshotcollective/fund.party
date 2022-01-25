@@ -50,7 +50,10 @@ export default function PGCard({
   }, [token]);
 
   return (
-    <Card className="m-0 p-0 mx-auto block" cover={<img src={tokenDetails.previewURI} style={{ height: 300 }} />}>
+    <Card
+      className="m-0 p-0 mx-auto block"
+      cover={<img src={tokenDetails.previewURI} style={{ height: 300, objectFit: "cover", opacity: "80%" }} />}
+    >
       <p className="font-medium text-lg">{`${pgType === "0" ? "Token" : "NFT"}: ${tokenDetails.name} ($${tokenDetails.symbol
         })`}</p>
       <div className="flex flex-row items-center font-normal" style={{ marginTop: "-20px", marginBottom: "20px" }}>
