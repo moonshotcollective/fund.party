@@ -34,7 +34,8 @@ export default function Checkout({ setRoute, cart, setCart, displayCart, tx, wri
   return (
     <div>
       <div style={{ width: "calc(max(min(80vw,800px),300px))", margin: "auto" }}>
-        <p className="text-xl font-medium mt-10 mb-0">Funding</p>
+        {/* <p className="text-xl font-medium mt-10 mb-0">Funding</p> */}
+        <p className="font-bold text-2xl m-0 mb-3">Funding</p>
         {/* <div className="flex items-center max-w-md">
           <Input
             type="number"

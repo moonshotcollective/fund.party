@@ -145,6 +145,7 @@ const ViewNFT = ({
             <div>
               <p className="text-2xl font-medium m-0">{nftInfo.name}</p>
               <p className="m-0">Total supply: {nftInfo.limit}</p>
+              <p className="m-0">Minted: {nftInfo.supply}</p>
             </div>
             <div className="text-right">
               <Button onClick={() => (window.location.href = "https://opensea.io")}>OpenSea</Button>

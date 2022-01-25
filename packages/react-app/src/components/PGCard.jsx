@@ -13,6 +13,7 @@ const abi = [
   "function symbol() view returns (string)",
   "function tokenURI(uint256 tokenId) view returns (string)",
   "function previewURI() view returns (string)",
+  "function currentToken() view returns (uint256)",
 ];
 
 export default function PGCard({
@@ -34,11 +35,12 @@ export default function PGCard({
     const name = await contract.name();
     const symbol = await contract.symbol();
     const previewURI = await contract.previewURI();
+    const minted = await contract.currentToken();
     console.log("previewURI", previewURI);
     //const uri = await contract.tokenURI("2");
     //const metadata = await axios.get(uri);
 
-    setTokenDetails({ name, symbol, previewURI });
+    setTokenDetails({ name, symbol, previewURI, minted: minted.toString() });
     //console.log(metadata.data.image);
   };
 
@@ -51,9 +53,13 @@ export default function PGCard({
     <Card className="m-0 p-0 mx-auto block" cover={<img src={tokenDetails.previewURI} style={{ height: 300 }} />}>
       <p className="font-medium text-lg">{`${pgType === "0" ? "Token" : "NFT"}: ${tokenDetails.name} ($${tokenDetails.symbol
         })`}</p>
-      <div className="flex flex-row items-center mb-2 font-normal" style={{ marginTop: "-20px", marginBottom: "25px" }}>
+      <div className="flex flex-row items-center font-normal" style={{ marginTop: "-20px", marginBottom: "20px" }}>
         <span className="mr-1">Supply: </span>
         <span>{supply}</span>
+      </div>
+      <div className="flex flex-row items-center mb-2 font-normal" style={{ marginTop: "-20px", marginBottom: "25px" }}>
+        <span className="mr-1">Minted: </span>
+        <span>{tokenDetails.minted}</span>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button
