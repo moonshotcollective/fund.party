@@ -62,7 +62,7 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       </div>
       <div className="mb-6 flex">
         <Input
-          placeholder="Project name"
+          placeholder="Search by Project name"
           size="large"
           onChange={e => setSearchName(e.target.value)}
           value={searchName}
@@ -103,7 +103,8 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       )}
       {publicGoods && publicGoods.length === 0 && (
         <div className="text-center">
-          <p className="m-0 p-0">No public goods created yet</p>
+          <p className="m-0 p-0">No projects deployed yet..</p>
+          <p className="m-0 p-0">Click "Create a Public Good", and be the first!</p>
         </div>
       )}
       {!publicGoods && (

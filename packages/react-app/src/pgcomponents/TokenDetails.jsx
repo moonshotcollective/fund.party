@@ -3,8 +3,6 @@ import { Button, Form, Input, InputNumber, Space, Spin } from "antd";
 import { create, urlSource } from "ipfs-http-client";
 import axios from "axios";
 
-//phunk CID QmQcoXyYKokyBHzN3yxDYgPP25cmZkm5Gqp5bzZsTDF7cd
-
 const erc721Fields = ["inflation", "name", "owner", "preview", "startPrice", "symbol", "cid"];
 
 function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handleDeployment, ...props }) {
@@ -220,7 +218,7 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                 <InputNumber placeholder="3%" style={{ width: "100%" }} />
               </Form.Item>
               <Form.Item
-                label="Preview image"
+                label="Preview image - (1100 x 400px) "
                 name="preview"
                 required
                 tooltip="Preview image for your ERC721 collection (PNG or JPEG)"
@@ -275,7 +273,12 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
             Go Back
           </Button>
           <div className="w-4" />
-          <Button type="primary" size="large" onClick={validateAndContinue} htmlType="submit" disabled={!validness}>
+          <Button
+            type="primary"
+            size="large"
+            onClick={validateAndContinue}
+            htmlType="submit" /* disabled={!validness} */
+          >
             Confirm token details
           </Button>
         </div>
