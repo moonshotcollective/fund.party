@@ -18,6 +18,7 @@ contract PGERC721 is ERC721Enumerable, Ownable {
     uint256 public curve;
     uint256 public price;
     string[] private uris;
+    string public previewURI;
 
     uint256 public limit;
     string private _userURI;
@@ -30,7 +31,8 @@ contract PGERC721 is ERC721Enumerable, Ownable {
         uint256 _basePrice,
         uint256 _curve,
         string memory base,
-        string[] memory _uris
+        string[] memory _uris,
+        string memory _previewURI
     ) ERC721(name, symbol) {
         //
         admin = _admin;
@@ -39,6 +41,7 @@ contract PGERC721 is ERC721Enumerable, Ownable {
         price = _basePrice;
         _userURI = base;
         uris = _uris;
+        previewURI = _previewURI;
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -111,6 +114,15 @@ contract PGERC721 is ERC721Enumerable, Ownable {
         super._burn(_id);
         (bool success, ) = msg.sender.call{value: currentFloor}("");
         require(success, "sending floor price failed");
+    }
+
+    /**
+     * @notice Update preview URI for ERC721
+     * @param _previewURI new URI for preview image
+     */
+    function setPreviewURI(string memory _previewURI) external {
+        require(msg.sender == admin, "Not Admin");
+        previewURI = _previewURI;
     }
 
     /**

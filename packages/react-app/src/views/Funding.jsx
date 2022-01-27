@@ -14,8 +14,8 @@ const Funding = ({
   localProvider,
 }) => {
   return (
-    <div style={{ marginTop: 64, borderBottom: "1px solid #eeeeee", paddingBottom: 64, marginBottom: 64 }}>
-      <div style={{ fontSize: 20, opacity: 0.777, fontWeight: "normal" }}>
+    <div style={{ marginTop: 64, paddingBottom: 64, marginBottom: 64 }}>
+      <div>
         <Checkout
           setRoute={setRoute}
           cart={cart}

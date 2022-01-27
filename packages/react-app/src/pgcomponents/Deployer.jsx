@@ -14,6 +14,7 @@ function Details({
   setIsDeploying,
   uCID,
   files,
+  fetchEvents,
 }) {
   console.log(pgData);
 
@@ -29,12 +30,19 @@ function Details({
     try {
       let method = "deployERC20";
       const { name, symbol, totalSupply, decimal } = pgData;
+      console.log("pgData", pgData);
       let extradata = [decimal];
       let calldata = [address, name, symbol, totalSupply];
 
       if (pgType === 2) {
         method = "deployERC721";
-        extradata = [parseEther(pgData.startPrice), pgData.inflation, pgData.baseURI, pgData.userURIs];
+        extradata = [
+          parseEther(pgData.startPrice.toString()),
+          1000 + pgData.inflation * 10,
+          pgData.baseURI,
+          pgData.userURIs,
+          pgData.preview,
+        ];
       }
 
       calldata = [...calldata, ...extradata];
@@ -43,16 +51,18 @@ function Details({
         console.log("📡 Transaction Update:", update);
         if (update && (update.status === "confirmed" || update.status === 1)) {
           reset();
+          fetchEvents();
           console.log(" 🍾 Transaction " + update.hash + " finished!");
           console.log(
             " ⛽️ " +
-              update.gasUsed +
-              "/" +
-              (update.gasLimit || update.gas) +
-              " @ " +
-              parseFloat(update.gasPrice) / 1000000000 +
-              " gwei",
+            update.gasUsed +
+            "/" +
+            (update.gasLimit || update.gas) +
+            " @ " +
+            parseFloat(update.gasPrice) / 1000000000 +
+            " gwei",
           );
+          setIsDeploying(false);
         }
       });
       console.log("awaiting metamask/web3 confirm result...", result);
@@ -65,49 +75,37 @@ function Details({
   };
 
   return (
-    <div className="text-center">
-      <h1 className="text-2xl font-medium">Review and Deploy</h1>
-      <div className="my-2">ALERT: Make sure all token details are correct.</div>
-
-      <div className="flex flex-1 flex-col items-center justify-center mx-auto mt-16 max-w-lg">
+    <div>
+      <h1 className="text-2xl font-medium">Deploy variables</h1>
+      <div className="mt-6 max-w-lg mx-auto">
         {pgData.name && (
-          <div className="flex flex-1 flex-row border-b mb-2">
-            <div className="mr-2">Project Name:</div>
-            <div>
-              {pgData.name} ({pgData.symbol})
-            </div>
-          </div>
+          <p className="p-0 mb-1">
+            Project Name: {pgData.name} ({pgData.symbol})
+          </p>
         )}
-        {pgData.totalSupply && (
-          <div className="flex flex-1 flex-row border-b mb-2">
-            <div className="mr-2">Max Total Supply:</div>
-            <div>{pgData.totalSupply}</div>
-          </div>
-        )}
-        {pgData.decimal && (
-          <div className="flex flex-1 flex-row border-b mb-2">
-            <div className="mr-2">Token Decimal:</div>
-            <div>{pgData.decimal}</div>
-          </div>
-        )}
-        {pgData.inflation && (
-          <div className="flex flex-1 flex-row border-b mb-2">
-            <div className="mr-2">Token Inflation Rate:</div>
-            <div>{pgData.inflation}</div>
-          </div>
-        )}
+        {pgData.name && <p className="p-0 mb-1">Total Supply: {pgData.totalSupply}</p>}
+        {pgData.decimal && <p className="p-0 mb-1">Token Decimal: {pgData.decimal}</p>}
+        {pgData.inflation && <p className="p-0 mb-1">Token Inflation Rate: {pgData.inflation}%</p>}
         {pgData.baseURI && (
+          <p className="p-0 m-0">
+            Token BaseURI:{" "}
+            <a href={pgData.baseURI} target="_blank">
+              Click
+            </a>
+          </p>
+        )}
+        {/* {pgData.baseURI && (
           <div className="flex flex-1 flex-row mb-2">
-            <div className="mr-2 flex flex-nowrap">Token baseURI:</div>
+            <div className="mr-2 flex flex-nowrap">Token BaseURI:</div>
             <div className="truncate max-w-sm">
               <a href={pgData.baseURI} target="_blank">
-                {pgData.baseURI}
+                Click
               </a>
             </div>
           </div>
-        )}
+        )} */}
       </div>
-      <div className="mt-20 flex flex-1 items-center justify-center flex-row">
+      <div className="mt-12 flex flex-1 items-center justify-center flex-row">
         {!isDeploying && (
           <>
             <Button size="large" onClick={onPreviousStep}>

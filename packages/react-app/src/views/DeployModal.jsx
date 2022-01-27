@@ -13,7 +13,7 @@ const steps = [
   { title: "Launch", Component: Deployer },
 ];
 
-function DeployModal({ tx, writeContracts, address, show, onCancel }) {
+function DeployModal({ tx, writeContracts, address, show, onCancel, setShow, fetchEvents }) {
   const [activeStep, setActiveStep] = useState(0);
   const [pgType, setPgType] = useState(0);
   const [pgData, setPgData] = useState({});
@@ -57,20 +57,9 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
   const ActiveStepView = steps[activeStep].Component;
 
   return (
-    <Modal
-      centered
-      visible={show}
-      footer={null}
-      width={700}
-      onCancel={handleCancel}
-      closeIcon={
-        <span className="flex items-center justify-center h-full">
-          <X />
-        </span>
-      }
-    >
+    <Modal centered visible={show} footer={null} width={700} onCancel={handleCancel} style={{ top: 20 }}>
       <div className="w-full flex flex-col items-center">
-        <div className="mb-16 w-full">
+        <div className="mt-10 mb-16 w-full">
           <Steps progressDot current={activeStep}>
             {steps.map(s => (
               <Steps.Step title={s.title} key={s.title} />
@@ -90,6 +79,7 @@ function DeployModal({ tx, writeContracts, address, show, onCancel }) {
           setIsDeploying={setIsDeploying}
           onPreviousStep={onPreviousStep}
           writeContracts={writeContracts}
+          fetchEvents={fetchEvents}
         />
       </div>
     </Modal>

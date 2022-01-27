@@ -12,6 +12,8 @@ const abi = [
   "function name() view returns (string memory)",
   "function symbol() view returns (string)",
   "function tokenURI(uint256 tokenId) view returns (string)",
+  "function previewURI() view returns (string)",
+  "function currentToken() view returns (uint256)",
 ];
 
 export default function PGCard({
@@ -32,10 +34,13 @@ export default function PGCard({
     const contract = new ethers.Contract(token, abi, localProvider);
     const name = await contract.name();
     const symbol = await contract.symbol();
+    const previewURI = await contract.previewURI();
+    const minted = await contract.currentToken();
+    console.log("previewURI", previewURI);
     //const uri = await contract.tokenURI("2");
     //const metadata = await axios.get(uri);
 
-    setTokenDetails({ name, symbol });
+    setTokenDetails({ name, symbol, previewURI, minted: minted.toString() });
     //console.log(metadata.data.image);
   };
 
@@ -45,63 +50,72 @@ export default function PGCard({
   }, [token]);
 
   return (
-    <Card title={`${pgType === "0" ? "Token" : "NFT"}: ${tokenDetails.name} ($${tokenDetails.symbol})`}>
-      <div className="flex flex-row items-center mb-2">
-        <span className="ml-3 mr-1">Supply: </span>
+    <Card
+      className="m-0 p-0 mx-auto block"
+      cover={<img src={tokenDetails.previewURI} style={{ height: 300, objectFit: "cover", opacity: "80%" }} />}
+    >
+      <p className="font-medium text-lg">{`${pgType === "0" ? "Token" : "NFT"}: ${tokenDetails.name} ($${tokenDetails.symbol
+        })`}</p>
+      <div className="flex flex-row items-center font-normal" style={{ marginTop: "-20px", marginBottom: "20px" }}>
+        <span className="mr-1">Supply: </span>
         <span>{supply}</span>
       </div>
-      <div className="flex flex-row items-center mb-2">
+      <div className="flex flex-row items-center mb-2 font-normal" style={{ marginTop: "-20px", marginBottom: "25px" }}>
+        <span className="mr-1">Minted: </span>
+        <span>{tokenDetails.minted}</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
         <Button
+          className="flex-grow"
+          style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
           size="large"
           onClick={() => {
             window.open(`/view/${token}`, "_self");
           }}
         >
-          <FolderViewOutlined /> View
+          <FolderViewOutlined /> <p className="m-0 p-0">View</p>
         </Button>
-        {/* <span className="ml-1 mr-1 ">or</span>
-        <Link
-          to={{
-            pathname: `/whale/${token}`,
+        <Button
+          className="flex-grow"
+          style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+          size="large"
+          onClick={() => {
+            const projectInfo = {
+              name: tokenDetails.name,
+              address: token,
+            };
+            const exists = cart.some(item => item.address === token);
+
+            if (!exists) {
+              setCart([...cart, projectInfo]);
+              notification.success({
+                style: { marginBottom: 64 },
+                message: "Added to cart!",
+                placement: "bottomRight",
+                description: <div style={{ fontSize: 22 }}>{token.name}</div>,
+              });
+            } else {
+              notification.error({
+                style: { marginBottom: 64 },
+                message: "Project is already in the cart!",
+                placement: "bottomRight",
+                description: <div style={{ fontSize: 22 }}>{token.name}</div>,
+              });
+            }
           }}
         >
-          Fund It 🐳
-        </Link> */}
-        <div className="flex flex-row items-center ml-2">
-          <Row>
-            <Col span={12}>
-              <Button
-                size="large"
-                onClick={() => {
-                  //window.open(item.branch)
-                  let copy = {};
-                  copy.name = tokenDetails.name;
-                  copy.address = token;
-                  console.log(copy);
-                  setCart([...cart, copy]);
-                  notification.success({
-                    style: { marginBottom: 64 },
-                    message: "Added to cart!",
-                    placement: "bottomRight",
-                    description: <div style={{ fontSize: 22 }}>{token.name}</div>,
-                  });
-                }}
-              >
-                <ShoppingCartOutlined /> Fund
-              </Button>
-            </Col>
-          </Row>
-        </div>
-        <div className="flex flex-row items-center ml-2">
-          <Button
-            size="large"
-            onClick={() => {
-              window.open(`/whale/${token}`, "_self");
-            }}
-          >
-            <UpSquareOutlined /> RTF
-          </Button>
-        </div>
+          <ShoppingCartOutlined /> <p className="m-0 p-0">Fund</p>
+        </Button>
+        {/* <Button
+          className="flex-grow"
+          style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+          size="large"
+          onClick={() => {
+            window.open(`/whale/${token}`, "_self");
+          }}
+        >
+          <UpSquareOutlined /> <p className="m-0 p-0">RTF</p>
+        </Button> */}
       </div>
       {/* <div className="flex flex-row items-center mb-2">
         <span className="mr-3">Token Address: </span>

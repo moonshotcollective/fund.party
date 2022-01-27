@@ -12,9 +12,8 @@ function Choose({ onNextStep, onPreviousStep, pgType, setPgType, ...props }) {
 
       <div className="flex flex-1 flex-col items-center justify-center mt-16">
         <div
-          className={classnames("p-2 flex flex-col w-3/4 border-gray-300 rounded my-2 cursor-pointer", {
-            border: pgType !== 1,
-            "border-blue-500 border-2": pgType === 1,
+          className={classnames("p-2 flex flex-col w-3/4 ring-gray-300 rounded my-2 cursor-pointer ring-2 border-0", {
+            "ring-blue-500 ring-2": pgType === 1,
           })}
           onClick={() => setPgType(1)}
         >
@@ -22,9 +21,8 @@ function Choose({ onNextStep, onPreviousStep, pgType, setPgType, ...props }) {
           <div>Some details on what erc-20 tokens are and how they work.</div>
         </div>
         <div
-          className={classnames("p-2 flex flex-col w-3/4 border-gray-300 rounded my-2 cursor-pointer", {
-            border: pgType !== 2,
-            "border-blue-500 border-2": pgType === 2,
+          className={classnames("p-2 flex flex-col w-3/4 ring-gray-300 rounded my-2 cursor-pointer ring-2 border-0", {
+            "ring-blue-500 ring-2": pgType === 2,
           })}
           onClick={() => setPgType(2)}
         >
