@@ -1,15 +1,16 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-import "./PGERC20.sol";
-import "./PGERC721.sol";
+import "./StreamFactory.sol";
+import "./SimpleStream.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
-contract PGDeployer is Ownable {
+contract PGDeployer {
     enum pgType {
         erc20,
         erc721
@@ -18,8 +19,7 @@ contract PGDeployer is Ownable {
     event pgDeployed(
         address indexed token,
         address indexed creator,
-        pgType indexed pgtype,
-        uint256 supply
+        pgType indexed pgtype
     );
     event pgerc20Deployed(address indexed token);
     event pgerc721Deployed(address indexed token, uint256 totalSupply);
@@ -36,7 +36,7 @@ contract PGDeployer is Ownable {
 
     address[] public projects;
 
-    function deployERC20(
+    /* function deployERC20(
         address tokenOwner,
         string memory name,
         string memory symbol,
@@ -51,9 +51,22 @@ contract PGDeployer is Ownable {
 
         // emit event
         emit pgDeployed(address(token), msg.sender, pgType.erc20, supply);
+    } */
+
+    function deployOrg(address[] calldata admins) public {
+        // deploy new token
+        StreamFactory token = new StreamFactory(msg.sender, admins);
+
+        /* // transfer token to owner
+        token.transferOwnership(msg.sender); */
+
+        projects.push(address(token));
+
+        // emit event
+        emit pgDeployed(address(token), msg.sender, pgType.erc721);
     }
 
-    function deployERC721(
+    /* function deployERC721(
         address admin,
         string memory name,
         string memory symbol,
@@ -84,7 +97,7 @@ contract PGDeployer is Ownable {
 
         // emit event
         emit pgDeployed(address(token), msg.sender, pgType.erc721, maxSupply);
-    }
+    } */
 
     function fundProjects() public payable {
         require(projects.length > 0, "no projects");

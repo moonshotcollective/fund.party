@@ -57,7 +57,7 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       <div className="flex justify-between">
         <p className="font-bold text-2xl m-0 mb-3">Public Goods</p>
         <Button onClick={() => setShow(true)} type="primary" type="ghost">
-          Create Public Good
+          Create Stream
         </Button>
       </div>
       <div className="mb-6 flex">
@@ -103,8 +103,8 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       )}
       {publicGoods && publicGoods.length === 0 && (
         <div className="text-center">
-          <p className="m-0 p-0">No projects deployed yet..</p>
-          <p className="m-0 p-0">Click "Create a Public Good", and be the first!</p>
+          <p className="m-0 p-0">No streams deployed yet..</p>
+          <p className="m-0 p-0">Click "Create a Stream", and be the first!</p>
         </div>
       )}
       {!publicGoods && (
