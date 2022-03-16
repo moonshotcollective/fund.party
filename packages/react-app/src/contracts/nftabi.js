@@ -2,6 +2,16 @@ export const NFTABI = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "_orgName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_previewURI",
+        type: "string",
+      },
+      {
         internalType: "address",
         name: "owner",
         type: "address",
@@ -325,12 +335,38 @@ export const NFTABI = [
   },
   {
     inputs: [],
+    name: "orgName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "owner",
     outputs: [
       {
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "previewURI",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",

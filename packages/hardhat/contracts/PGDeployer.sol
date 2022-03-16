@@ -17,6 +17,8 @@ contract PGDeployer {
     event pgDeployed(
         address indexed token,
         address indexed creator,
+        string org,
+        string preview,
         pgType indexed pgtype
     );
     event pgerc20Deployed(address indexed token);
@@ -51,9 +53,19 @@ contract PGDeployer {
         emit pgDeployed(address(token), msg.sender, pgType.erc20, supply);
     } */
 
-    function deployOrg(address owner, address[] calldata admins) public {
+    function deployOrg(
+        string memory _orgName,
+        string memory _previewURI,
+        address owner,
+        address[] calldata admins
+    ) public {
         // deploy new token
-        StreamFactory token = new StreamFactory(owner, admins);
+        StreamFactory token = new StreamFactory(
+            _orgName,
+            _previewURI,
+            owner,
+            admins
+        );
 
         /*  // transfer token to owner
         token.transferOwnership(msg.sender); */
@@ -61,7 +73,13 @@ contract PGDeployer {
         projects.push(address(token));
 
         // emit event
-        emit pgDeployed(address(token), msg.sender, pgType.erc721);
+        emit pgDeployed(
+            address(token),
+            msg.sender,
+            string(_orgName),
+            string(_previewURI),
+            pgType.erc721
+        );
     }
 
     /* function deployERC721(

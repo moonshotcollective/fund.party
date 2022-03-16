@@ -20,6 +20,9 @@ contract StreamFactory is AccessControl, Ownable {
         bool hasStream;
     }
 
+    string public orgName;
+    string public previewURI;
+
     /// @dev StreamAdded event to track the streams after creation
     event StreamAdded(address creator, address user, address stream);
 
@@ -34,11 +37,18 @@ contract StreamFactory is AccessControl, Ownable {
         _;
     }
 
-    constructor(address owner, address[] memory admins) {
+    constructor(
+        string memory _orgName,
+        string memory _previewURI,
+        address owner,
+        address[] memory admins
+    ) {
         for (uint256 i = 0; i < admins.length; i++) {
             _setupRole(DEFAULT_ADMIN_ROLE, admins[i]);
             _setupRole(FACTORY_MANAGER, admins[i]);
         }
+        orgName = _orgName;
+        previewURI = _previewURI;
         transferOwnership(owner);
     }
 

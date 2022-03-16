@@ -28,9 +28,10 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       const eventFilter = contract.filters.pgDeployed();
       const events = await contract.queryFilter(eventFilter);
       const goods = events.map(eventLog => ({ ...eventLog.args, name: "" }));
+      console.log("gud", goods);
       for (const good of goods) {
         const contract = new Contract(good.token, NFTABI, localProvider);
-        good.name = await contract.owner();
+        good.name = await contract.orgName();
         console.log("fetched good", good);
       }
       const selectedGoods = goods.filter(
