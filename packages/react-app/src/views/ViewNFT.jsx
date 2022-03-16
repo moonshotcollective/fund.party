@@ -104,7 +104,7 @@ const ViewNFT = ({
       setData(results);
 
       // Wait until list is almost fully loaded to render
-      if (results.length >= 20) {
+      if (results.length >= 1) {
         setReady(true);
       }
     });
@@ -117,6 +117,8 @@ const ViewNFT = ({
   useEffect(() => {
     fetchOrgInfo();
     console.log("org", orgInfo);
+    // uhh
+    console.log("sData", sData);
   }, [orgContract, address]);
 
   const createNewStream = async () => {
@@ -217,6 +219,79 @@ const ViewNFT = ({
             </div>
           </div>
         </Modal>
+      )}
+      {ready ? (
+        <div style={{ marginTop: 30 }}>
+          <List
+            bordered
+            dataSource={sData}
+            renderItem={item => (
+              <Row>
+                <div
+                  style={{
+                    width: "110%",
+                    position: "relative",
+                    display: "flex",
+                    flex: 1,
+                    padding: 15,
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {"  "}
+                  <Col span={10}>
+                    <div
+                      style={{
+                        display: "flex",
+                      }}
+                    >
+                      <Address
+                        value={item[1]}
+                        ensProvider={mainnetProvider}
+                        fontSize={18}
+                        style={{ display: "flex", flex: 1, alignItems: "center" }}
+                      />
+                      {"  "}
+                    </div>
+                  </Col>
+                  <Col span={4}>
+                    <Link to={`/user/${item[2]}`}>View Stream</Link>
+                    {"  "}
+                  </Col>
+                  <Col span={5}>
+                    <Address
+                      value={item[2]}
+                      ensProvider={mainnetProvider}
+                      fontSize={10}
+                      style={{
+                        paddingLeft: 30,
+                        paddingRight: 30,
+                        flex: 0.3,
+                        alignItems: "center",
+                      }}
+                    />
+                    {"  "}
+                  </Col>
+                  <Col span={3}>
+                    <Progress
+                      style={{ alignItems: "right" }}
+                      type="dashboard"
+                      showInfo={true}
+                      width={40}
+                      fontSize={1}
+                      percent={item.percent}
+                      format={percent => `${percent.toFixed(0)}%`}
+                    />
+                  </Col>
+                </div>
+              </Row>
+            )}
+          />
+        </div>
+      ) : (
+        <div style={{ marginTop: 30 }}>
+          <Spin tip="Loading Streams... (This may take a moment)" />
+        </div>
       )}
     </div>
   );

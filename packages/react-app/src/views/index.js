@@ -6,3 +6,4 @@ export { default as ViewNFT } from "./ViewNFT";
 export { default as WhalesUI } from "./WhalesUI";
 export { default as Checkout } from "./Checkout";
 export { default as Funding } from "./Funding";
+export { default as UserStream } from "./UserStream";
