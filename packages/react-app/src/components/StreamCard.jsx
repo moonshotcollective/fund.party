@@ -5,6 +5,7 @@ import { ExperimentOutlined, FolderViewOutlined, UpSquareOutlined, ShoppingCartO
 import axios from "axios";
 import { useRef } from "react";
 import { ethers } from "ethers";
+import { useHistory } from "react-router-dom";
 import { Address } from ".";
 import { AlignJustify } from "react-feather";
 import { StreamABI } from "../contracts/StreamABI.js";
@@ -42,6 +43,8 @@ export default function StreamCard({
     fetchTokenData();
   }, [token]);
 
+  let history = useHistory();
+
   return (
     <Card
       className="content-evenly m-0 p-0 mx-auto block"
@@ -68,7 +71,9 @@ export default function StreamCard({
           style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
           size="large"
           onClick={() => {
-            window.open(`/view/${token}`, "_self");
+            history.push(`/view/${token}`)
+            /* window.open(`/view/${token}`, "_self"); */
+            {/* <Link to={`/view/${token}`}/> */}
           }}
         >
           <FolderViewOutlined /> <p className="m-0 p-0">View</p>
