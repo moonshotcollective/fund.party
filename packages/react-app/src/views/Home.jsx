@@ -5,7 +5,7 @@ import DeployModal from "./DeployModal";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { PlusOutlined } from "@ant-design/icons";
-import { PGCard } from "../components";
+import { StreamCard } from "../components";
 import { StreamABI } from "../contracts/StreamABI";
 import { useDebounce } from "../hooks";
 
@@ -86,7 +86,7 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
           <Input /> */}
           <div className="grid lg:grid-cols-3 max-w-6xl mx-auto gap-6 md:grid-cols-2 grid-cols-1">
             {publicGoods.map(item => (
-              <PGCard
+              <StreamCard
                 cart={cart}
                 setCart={setCart}
                 token={item.token}

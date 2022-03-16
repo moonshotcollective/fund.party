@@ -21,6 +21,6 @@ export { default as L2Bridge } from "./L2Bridge";
 export { default as NetworkDisplay } from "./NetworkDisplay";
 export { default as FaucetHint } from "./FaucetHint";
 export { default as NetworkSwitch } from "./NetworkSwitch";
-export { default as PGCard } from "./PGCard";
+export { default as StreamCard } from "./StreamCard";
 export { default as PayButton } from "./PayButton";
 export { default as QRPunkBlockie } from "./QRPunkBlockie";
