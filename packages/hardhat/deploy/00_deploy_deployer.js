@@ -39,12 +39,12 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   // Verify your contracts with Etherscan
   // You don't want to verify on localhost
-  if (chainId !== localChainId) {
+  /* if (chainId !== localChainId) {
     await run("verify:verify", {
       address: PGDeployer.address,
       contract: "contracts/PGDeployer.sol:PGDeployer",
       contractArguments: [],
     });
-  }
+  } */
 };
 module.exports.tags = ["PGDeployer"];
