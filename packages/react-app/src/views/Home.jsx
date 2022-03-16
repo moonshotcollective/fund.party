@@ -77,8 +77,6 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
           onChange={newValue => setSelectFilter(newValue)}
         >
           <Option value="">All</Option>
-          <Option value="0">ERC20</Option>
-          <Option value="1">NFT</Option>
         </Select>
       </div>
 
