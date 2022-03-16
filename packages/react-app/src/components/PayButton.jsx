@@ -28,7 +28,7 @@ export default function PayButton({
     setStatus(yourLocalBalance.gte(ethers.utils.parseEther(amount || "0")) ? 3 : 5);
   };
 
-  const refreshTokenDetails = async () => {
+  const refreshStreamDetails = async () => {
     console.log(`Your token is: `, readContracts[token]);
 
     const decimals = await readContracts[token].decimals();
@@ -76,7 +76,7 @@ export default function PayButton({
           description: `${approvalAmount} ${approvalToken} was approved for GTCStream.`,
           placement: "topRight",
         });
-        await refreshTokenDetails();
+        await refreshStreamDetails();
       }
     });
   };
@@ -97,7 +97,7 @@ export default function PayButton({
       } else {
         setStatus(4);
         await tokenPayHandler(payParams);
-        await refreshTokenDetails();
+        await refreshStreamDetails();
       }
     }
   };
@@ -116,7 +116,7 @@ export default function PayButton({
   useEffect(() => {
     if (!isETH()) {
       setStatus(0);
-      refreshTokenDetails();
+      refreshStreamDetails();
     } else {
       refreshETH();
     }

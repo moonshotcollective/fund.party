@@ -22,7 +22,7 @@ export default function PGCard({
   cart,
   ...props
 }) {
-  const [tokenDetails, setTokenDetails] = useState({});
+  const [StreamDetails, setStreamDetails] = useState({});
 
   const fetchTokenData = async () => {
     // instantiate contract
@@ -33,7 +33,7 @@ export default function PGCard({
     //const uri = await contract.tokenURI("2");
     //const metadata = await axios.get(uri);
 
-    setTokenDetails({ name, previewURI });
+    setStreamDetails({ name, previewURI });
     //console.log(metadata.data.image);
   };
 
@@ -45,16 +45,16 @@ export default function PGCard({
   return (
     <Card
       className="m-0 p-0 mx-auto block"
-      cover={<img src={tokenDetails.previewURI} style={{ height: 300, objectFit: "cover", opacity: "80%" }} />}
+      cover={<img src={StreamDetails.previewURI} style={{ height: 300, objectFit: "cover", opacity: "80%" }} />}
     >
-      <p className="font-medium text-lg">{`${pgType === "0" ? "Token" : "Org"}: ${tokenDetails.name}`}</p>
+      <p className="font-medium text-lg">{`${pgType === "0" ? "Token" : "Org"}: ${StreamDetails.name}`}</p>
       {/* <div className="flex flex-row items-center font-normal" style={{ marginTop: "-20px", marginBottom: "20px" }}>
         <span className="mr-1">Supply: </span>
         <span>{supply}</span>
       </div> */}
       {/* <div className="flex flex-row items-center mb-2 font-normal" style={{ marginTop: "-20px", marginBottom: "25px" }}>
         <span className="mr-1">Minted: </span>
-        <span>{tokenDetails.minted}</span>
+        <span>{StreamDetails.minted}</span>
       </div> */}
       <div className="flex flex-wrap gap-2">
         <Button
@@ -73,7 +73,7 @@ export default function PGCard({
           size="large"
           onClick={() => {
             const projectInfo = {
-              name: tokenDetails.name,
+              name: StreamDetails.name,
               address: token,
             };
             const exists = cart.some(item => item.address === token);

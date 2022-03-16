@@ -4,11 +4,11 @@ import { useContractReader } from "eth-hooks";
 import { ethers } from "ethers";
 import { Modal, Steps } from "antd";
 import { X } from "react-feather";
-import { Deployer, Intro, TokenDetails, TokenOptions } from "../pgcomponents";
+import { Deployer, Intro, StreamDetails, TokenOptions } from "../pgcomponents";
 
 const steps = [
   { title: "Intro", Component: Intro },
-  { title: "Stream Details", Component: TokenDetails },
+  { title: "Stream Details", Component: StreamDetails },
   { title: "Launch", Component: Deployer },
 ];
 

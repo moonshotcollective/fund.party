@@ -182,7 +182,7 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                 className="w-full"
                 rules={[{ required: true }, { type: "string" }]}
               >
-                <Input placeholder="0xaddress,0xaddress" />
+                <Input placeholder="0xaddress,0xaddress,etc.. no trailing commas" />
               </Form.Item>
               <Form.Item
                 label="Preview image - (1100 x 400px) "
