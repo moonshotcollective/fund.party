@@ -127,4 +127,9 @@ contract StreamFactory is AccessControl, Ownable {
     function releaseUserStream(address user) public isPermittedFactoryManager {
         SimpleStream(userStreams[user]).transferOwnership(user);
     }
+
+    /**
+     * @notice Fallback
+     */
+    receive() external payable {}
 }
