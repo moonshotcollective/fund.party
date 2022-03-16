@@ -4,6 +4,7 @@ import axios from "axios";
 import { useContractReader } from "eth-hooks";
 import { ethers } from "ethers";
 import pretty from "pretty-time";
+import { useParams, useLocation } from "react-router-dom";
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { Address, AddressInput, Balance, PayButton, QRPunkBlockie } from "../components";
 
@@ -155,6 +156,11 @@ export default function ExampleUI({
     window.scrollTo(0, 0);
   }),
     [address]; */
+
+  const location = useLocation();
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div style={{ paddingBotton: "25px" }}>
