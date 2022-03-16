@@ -9,6 +9,7 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
+import "./App.css";
 import React, { useCallback, useEffect, useState, setRoute } from "react";
 import { Link, Route, Switch, useLocation } from "react-router-dom";
 import {

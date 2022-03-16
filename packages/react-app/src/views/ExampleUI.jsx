@@ -153,9 +153,9 @@ export default function ExampleUI({
 
   return (
     <div style={{ paddingBotton: "25px" }}>
-      <div style={{ padding: 16, width: WIDTH, margin: "auto" }}>
-        <div style={{ padding: 32 }}>
-          <div style={{ padding: 32 }}>
+      <div style={{ padding: 4, width: WIDTH, margin: "auto" }}>
+        <div style={{ padding: 0 }}>
+          <div style={{ padding: 0 }}>
             <Balance value={myMainnetGTCBalance} price={quoteRate} />
             <span style={{ opacity: 0.5 }}>
               {" "}
@@ -164,32 +164,25 @@ export default function ExampleUI({
             </span>
           </div>
           <div>
-            {totalProgress} ({totalSeconds && pretty(totalSeconds.toNumber() * 10000000)})
+            {totalProgress} {totalSeconds && pretty(totalSeconds.toNumber() * 10000000)}
           </div>
         </div>
-      </div>
-
-      <div style={{ marginTop: -32 }}>
-        <Address value={stream} />
-      </div>
-
-      <div
-        style={{
-          width: 400,
-          margin: "auto",
-          marginTop: 32,
-          position: "relative",
-        }}
-      >
-        <div style={{ padding: 16, marginBottom: 64 }}>
-          <span style={{ opacity: 0.5 }}>Streaming To:</span>
+        <div
+          style={{
+            width: 400,
+            margin: "auto",
+            position: "relative",
+          }}
+        >
+          <div style={{ paddingTop: 8, marginBottom: 24 }}>
+            <span style={{ opacity: 0.5 }}>Streaming To:</span>
+          </div>
+          <div style={{ position: "absolute", top: -50 }}>
+            <QRPunkBlockie withQr={false} address={streamToAddress} scale={0.7} />
+          </div>
+          <Address value={streamToAddress} ensProvider={mainnetProvider} />
         </div>
-        <div style={{ position: "absolute", top: -50 }}>
-          <QRPunkBlockie withQr={false} address={streamToAddress} scale={0.7} />
-        </div>
-        <Address value={streamToAddress} ensProvider={mainnetProvider} />
       </div>
-
       <div
         style={{
           border: "1px solid #cccccc",
@@ -241,6 +234,26 @@ export default function ExampleUI({
           </Button>
         </div>
       </div>
+
+      {/* <div style={{ marginTop: -32 }}>
+        <Address value={stream} />
+      </div> */}
+
+      {/* <div
+        style={{
+          width: 400,
+          margin: "auto",
+          position: "relative",
+        }}
+      >
+        <div style={{ padding: 16, marginBottom: 64 }}>
+          <span style={{ opacity: 0.5 }}>Contract Address:</span>
+        </div>
+        <div style={{ position: "absolute", top: -50 }}>
+          <QRPunkBlockie withQr={false} address={stream} scale={0.7} />
+        </div>
+        <Address value={stream} ensProvider={mainnetProvider} />
+      </div> */}
 
       {/*
         📑 Maybe display a list of events?
