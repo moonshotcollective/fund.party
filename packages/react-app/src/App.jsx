@@ -309,6 +309,7 @@ function App(props) {
             localProvider={localProvider}
             userSigner={userSigner}
             localChainId={localChainId}
+            mainnetProvider={mainnetProvider}
             readContracts={readContracts}
             userProvider={userProvider}
             injectedProvider={injectedProvider}

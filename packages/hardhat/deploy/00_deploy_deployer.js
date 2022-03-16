@@ -9,6 +9,15 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
+  // // deploy dummy GTC on non-mainnet networks
+  if (chainId !== "1") {
+    GTC = await deploy("GTC", {
+      from: deployer,
+      args: ["0xb010ca9Be09C382A9f31b79493bb232bCC319f01"],
+      log: true,
+    });
+  }
+
   await deploy("PGDeployer", {
     from: deployer,
     log: true,

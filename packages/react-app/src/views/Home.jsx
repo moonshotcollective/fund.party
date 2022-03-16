@@ -30,7 +30,7 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       const goods = events.map(eventLog => ({ ...eventLog.args, name: "" }));
       for (const good of goods) {
         const contract = new Contract(good.token, NFTABI, localProvider);
-        good.name = await contract.name();
+        good.name = await contract.owner();
         console.log("fetched good", good);
       }
       const selectedGoods = goods.filter(
@@ -91,9 +91,9 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
                 cart={cart}
                 setCart={setCart}
                 token={item.token}
-                minted={item.minted}
-                supply={item.supply.toString()}
-                pgType={item.pgtype.toString()}
+                /* minted={item.minted} */
+                /* supply={item.supply.toString()}
+                pgType={item.pgtype.toString()} */
                 creator={item.creator}
                 localProvider={localProvider}
               />

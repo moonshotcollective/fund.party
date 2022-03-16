@@ -3,102 +3,17 @@ export const NFTABI = [
     inputs: [
       {
         internalType: "address",
-        name: "_admin",
+        name: "owner",
         type: "address",
       },
       {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxSupply",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_basePrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_curve",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "base",
-        type: "string",
-      },
-      {
-        internalType: "string[]",
-        name: "_uris",
-        type: "string[]",
-      },
-      {
-        internalType: "string",
-        name: "_previewURI",
-        type: "string",
+        internalType: "address[]",
+        name: "admins",
+        type: "address[]",
       },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "approved",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "Approval",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
-    ],
-    name: "ApprovalForAll",
-    type: "event",
   },
   {
     anonymous: false,
@@ -124,34 +39,122 @@ export const NFTABI = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
       },
       {
         indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
+        internalType: "bytes32",
+        name: "previousAdminRole",
+        type: "bytes32",
       },
       {
         indexed: true,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
+        internalType: "bytes32",
+        name: "newAdminRole",
+        type: "bytes32",
       },
     ],
-    name: "Transfer",
+    name: "RoleAdminChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "RoleGranted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "RoleRevoked",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "creator",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "stream",
+        type: "address",
+      },
+    ],
+    name: "StreamAdded",
     type: "event",
   },
   {
     inputs: [],
-    name: "admin",
+    name: "DEFAULT_ADMIN_ROLE",
     outputs: [
       {
-        internalType: "address",
+        internalType: "bytes32",
         name: "",
-        type: "address",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "FACTORY_MANAGER",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
     stateMutability: "view",
@@ -161,16 +164,11 @@ export const NFTABI = [
     inputs: [
       {
         internalType: "address",
-        name: "to",
+        name: "_newFactoryManager",
         type: "address",
       },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
     ],
-    name: "approve",
+    name: "addFactoryManager",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -178,69 +176,69 @@ export const NFTABI = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "owner",
+        internalType: "contract SimpleStream",
+        name: "stream",
         type: "address",
       },
     ],
-    name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
+    name: "addStreamForUser",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
-    name: "currentSupply",
-    outputs: [
+    inputs: [
+      {
+        internalType: "address payable",
+        name: "_toAddress",
+        type: "address",
+      },
       {
         internalType: "uint256",
-        name: "",
+        name: "_cap",
         type: "uint256",
       },
+      {
+        internalType: "uint256",
+        name: "_frequency",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "_startsFull",
+        type: "bool",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_gtc",
+        type: "address",
+      },
     ],
-    stateMutability: "view",
+    name: "createStreamFor",
+    outputs: [
+      {
+        internalType: "address",
+        name: "streamAddress",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
-    name: "currentToken",
-    outputs: [
+    inputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "curve",
+    name: "getRoleAdmin",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "bytes32",
         name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "floor",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        type: "bytes32",
       },
     ],
     stateMutability: "view",
@@ -249,16 +247,16 @@ export const NFTABI = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
+        internalType: "address payable",
+        name: "user",
+        type: "address",
       },
     ],
-    name: "getApproved",
+    name: "getStreamForUser",
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "streamAddress",
         type: "address",
       },
     ],
@@ -268,17 +266,35 @@ export const NFTABI = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "owner",
-        type: "address",
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
       },
       {
         internalType: "address",
-        name: "operator",
+        name: "account",
         type: "address",
       },
     ],
-    name: "isApprovedForAll",
+    name: "grantRole",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "hasRole",
     outputs: [
       {
         internalType: "bool",
@@ -290,42 +306,21 @@ export const NFTABI = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "limit",
-    outputs: [
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
       {
         internalType: "uint256",
-        name: "",
+        name: "increase",
         type: "uint256",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "mintItem",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
+    name: "increaseUserStreamCap",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -344,70 +339,12 @@ export const NFTABI = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "ownerOf",
-    outputs: [
-      {
         internalType: "address",
-        name: "",
+        name: "user",
         type: "address",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "previewURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "price",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "recipient",
-    outputs: [
-      {
-        internalType: "address payable",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_id",
-        type: "uint256",
-      },
-    ],
-    name: "redeem",
+    name: "releaseUserStream",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -422,22 +359,17 @@ export const NFTABI = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "from",
-        type: "address",
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
       },
       {
         internalType: "address",
-        name: "to",
+        name: "account",
         type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
       },
     ],
-    name: "safeTransferFrom",
+    name: "renounceRole",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -445,58 +377,17 @@ export const NFTABI = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "from",
-        type: "address",
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
       },
       {
         internalType: "address",
-        name: "to",
+        name: "account",
         type: "address",
       },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "_data",
-        type: "bytes",
-      },
     ],
-    name: "safeTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
-    ],
-    name: "setApprovalForAll",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_previewURI",
-        type: "string",
-      },
-    ],
-    name: "setPreviewURI",
+    name: "revokeRole",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -521,117 +412,6 @@ export const NFTABI = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenOfOwnerByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "tokenURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "transferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -645,7 +425,41 @@ export const NFTABI = [
     type: "function",
   },
   {
-    stateMutability: "payable",
-    type: "receive",
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "userStreams",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "users",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "hasStream",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
 ];

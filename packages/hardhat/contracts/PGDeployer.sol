@@ -3,10 +3,8 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "./StreamFactory.sol";
 import "./SimpleStream.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
@@ -53,11 +51,11 @@ contract PGDeployer {
         emit pgDeployed(address(token), msg.sender, pgType.erc20, supply);
     } */
 
-    function deployOrg(address[] calldata admins) public {
+    function deployOrg(address owner, address[] calldata admins) public {
         // deploy new token
-        StreamFactory token = new StreamFactory(msg.sender, admins);
+        StreamFactory token = new StreamFactory(owner, admins);
 
-        /* // transfer token to owner
+        /*  // transfer token to owner
         token.transferOwnership(msg.sender); */
 
         projects.push(address(token));
