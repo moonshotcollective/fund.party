@@ -157,6 +157,7 @@ const ViewNFT = ({
             description: `Stream is now available for ${userAddress}`,
             placement: "topRight",
           });
+          location.reload();
         }
       },
     );
