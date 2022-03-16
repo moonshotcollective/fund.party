@@ -18,7 +18,6 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
     valid: false,
     loading: false,
     userURIs: [],
-    baseURI: "",
     totalSupply: "",
   });
 
@@ -27,9 +26,6 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
 
     setPgData({
       ...values,
-      baseURI: cidDetails.baseURI,
-      userURIs: cidDetails.userURIs,
-      totalSupply: cidDetails.totalSupply,
     });
 
     onNextStep();
@@ -87,7 +83,7 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
     checkPreviewImage();
   }, [previewDetails.preview]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const checkCid = async () => {
       if (cidDetails.cid.length != 46) {
         return setCidDetails(old => ({ ...old, valid: false }));
@@ -122,7 +118,7 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
     };
 
     checkCid();
-  }, [cidDetails.cid]);
+  }, [cidDetails.cid]); */
 
   useEffect(() => {
     setValidness(checkValidness());
@@ -131,10 +127,8 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
   return (
     <div>
       <div className="text-center">
-        <h1 className="text-2xl font-medium">
-          Provide details for your {isERC20 ? "ERC-20" : "ERC-721"} token contract?
-        </h1>
-        <div className="my-2">Some more description on what details are needed to launch the token.</div>
+        <h1 className="text-2xl font-medium">Provide details for your stream.</h1>
+        <div className="my-2">Some more description on what details are needed to launch.</div>
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center mx-auto mt-10 max-w-lg">
@@ -147,38 +141,21 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
           layout="vertical"
           initialValues={{
             name: pgData.name,
-            symbol: pgData.symbol,
-            totalSupply: pgData.totalSupply,
-            startPrice: pgData.startPrice,
-            decimal: pgData.decimal || 18,
-            baseURI: pgData.baseURI,
             owner: pgData.owner,
-            userURIs: pgData.uris,
-            inflation: pgData.inflation,
+            admins: pgData.admins,
             preview: pgData.preview,
-            cid: pgData.cid,
           }}
           size="large"
         >
           <Form.Item
-            label="Project name"
+            label="Organization name"
             name="name"
             required
             tooltip="Name of your public good"
             className="w-full"
             rules={[{ required: true }, { type: "string", min: 6 }]}
           >
-            <Input placeholder="Simple Public Goods Project" />
-          </Form.Item>
-          <Form.Item
-            label="Symbol"
-            name="symbol"
-            tooltip="Symbol is a short name for your public good's token"
-            className="w-full"
-            required
-            rules={[{ required: true }, { type: "string", min: 3 }]}
-          >
-            <Input placeholder="SPGP" />
+            <Input placeholder="myDAO" />
           </Form.Item>
 
           {isERC20 ? (
@@ -198,24 +175,14 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                 <Input placeholder="0x..." />
               </Form.Item>
               <Form.Item
-                label="Start mint price"
-                name="startPrice"
+                label="Admin addresses"
+                name="admins"
                 required
-                tooltip="Start price in ETH"
+                tooltip="Comma separated list of addresses"
                 className="w-full"
-                rules={[{ type: "number", min: 0, max: 100 }]}
+                rules={[{ required: true }, { type: "string" }]}
               >
-                <InputNumber placeholder="0.03Ξ" style={{ width: "100%" }} />
-              </Form.Item>
-              <Form.Item
-                label="Price inflation rate"
-                name="inflation"
-                required
-                tooltip="Price inflation rate in percents"
-                className="w-full"
-                rules={[{ type: "number", min: 0, max: 100 }]}
-              >
-                <InputNumber placeholder="3%" style={{ width: "100%" }} />
+                <Input placeholder="0xaddress,0xaddress" />
               </Form.Item>
               <Form.Item
                 label="Preview image - (1100 x 400px) "
@@ -237,21 +204,6 @@ function Details({ onPreviousStep, onNextStep, pgType, pgData, setPgData, handle
                 />
               </Form.Item>
               {previewDetails.valid ? <img src={previewDetails.preview} className="mb-5" alt="Preview" /> : null}
-              <Form.Item
-                className="w-full"
-                name="cid"
-                label="CID"
-                required
-                tooltip="IPFS CID to fetch information about your collection"
-                rules={[{ required: true, len: 46 }]}
-              >
-                <Input
-                  onChange={e => {
-                    setCidDetails(old => ({ ...old, cid: e.target.value }));
-                  }}
-                  placeholder="QmQcoXyYKokyBHzN3yd..."
-                />
-              </Form.Item>
               {cidDetails.valid && (
                 <div className="mr-auto p-0 m-0" style={{ marginTop: "-10px" }}>
                   <p className="p-0 m-0">Total supply: {cidDetails.totalSupply}</p>

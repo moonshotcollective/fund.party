@@ -151,9 +151,10 @@ export default function ExampleUI({
     setDepositAmount();
   };
 
-  useLayoutEffect(() => {
+  /* useEffect(() => {
     window.scrollTo(0, 0);
-  });
+  }),
+    [address]; */
 
   return (
     <div style={{ paddingBotton: "25px" }}>

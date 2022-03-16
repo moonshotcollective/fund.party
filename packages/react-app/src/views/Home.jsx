@@ -56,14 +56,14 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
         fetchEvents={fetchEvents}
       />
       <div className="flex justify-between">
-        <p className="font-bold text-2xl m-0 mb-3">Public Goods</p>
+        <p className="font-bold text-2xl m-0 mb-3">Public Streams</p>
         <Button onClick={() => setShow(true)} type="primary" type="ghost">
           Create Stream
         </Button>
       </div>
       <div className="mb-6 flex">
         <Input
-          placeholder="Search by Project name"
+          placeholder="Search by Organization name"
           size="large"
           onChange={e => setSearchName(e.target.value)}
           value={searchName}

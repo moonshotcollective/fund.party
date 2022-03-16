@@ -8,8 +8,7 @@ import { Deployer, Intro, TokenDetails, TokenOptions } from "../pgcomponents";
 
 const steps = [
   { title: "Intro", Component: Intro },
-  { title: "Token Type", Component: TokenOptions },
-  { title: "Token Details", Component: TokenDetails },
+  { title: "Stream Details", Component: TokenDetails },
   { title: "Launch", Component: Deployer },
 ];
 

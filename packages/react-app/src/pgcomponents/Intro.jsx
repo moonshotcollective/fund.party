@@ -4,8 +4,8 @@ import React from "react";
 function Intro({ onNextStep }) {
   return (
     <div className="text-center">
-      <h1 className="text-2xl font-medium">So You Want To Create a Public Good?</h1>
-      <div className="my-3">Some more description of what public goods are and how to do it well.</div>
+      <h1 className="text-2xl font-medium">Start a token stream for your contributors!</h1>
+      <div className="my-3">Some more description ig</div>
 
       <div className="mt-20">
         <Button type="primary" size="large" onClick={onNextStep}>

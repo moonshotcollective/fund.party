@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Button } from "antd";
+import { Button, Card } from "antd";
 import { formatEther, parseEther } from "@ethersproject/units";
 
 function Details({
   tx,
   reset,
-  pgType,
   pgData,
   address,
   isDeploying,
@@ -22,32 +21,32 @@ function Details({
     setIsDeploying(true);
     console.log(pgData);
 
-    /* uint256 _basePrice,
-    uint256 _curve,
-    string memory base,
-    string[] memory _uris */
-
     try {
-      let method = "deployERC20";
-      const { name, symbol, totalSupply, decimal } = pgData;
+      const { name, preview, owner, admins } = pgData;
       console.log("pgData", pgData);
-      let extradata = [decimal];
-      let calldata = [address, name, symbol, totalSupply];
+      //let extradata = [decimal];
+      //let calldata = [address, name, symbol, totalSupply];
+      let calldata = [name, preview, owner, admins.split(",")];
+      console.log(calldata);
 
-      if (pgType === 2) {
+      /* if (pgType === 2) {
         method = "deployERC721";
         extradata = [
           parseEther(pgData.startPrice.toString()),
           1000 + pgData.inflation * 10,
-          pgData.baseURI,
           pgData.userURIs,
           pgData.preview,
         ];
-      }
+      } */
 
-      calldata = [...calldata, ...extradata];
+      /* string memory _orgName,
+        string memory _previewURI,
+        address owner,
+        address[] calldata admins */
 
-      const result = tx(writeContracts.PGDeployer[method](...calldata), update => {
+      //calldata = [...calldata, ...extradata];
+
+      const result = tx(writeContracts.PGDeployer.deployOrg(...calldata), update => {
         console.log("📡 Transaction Update:", update);
         if (update && (update.status === "confirmed" || update.status === 1)) {
           reset();
@@ -55,12 +54,12 @@ function Details({
           console.log(" 🍾 Transaction " + update.hash + " finished!");
           console.log(
             " ⛽️ " +
-            update.gasUsed +
-            "/" +
-            (update.gasLimit || update.gas) +
-            " @ " +
-            parseFloat(update.gasPrice) / 1000000000 +
-            " gwei",
+              update.gasUsed +
+              "/" +
+              (update.gasLimit || update.gas) +
+              " @ " +
+              parseFloat(update.gasPrice) / 1000000000 +
+              " gwei",
           );
           setIsDeploying(false);
         }
@@ -78,22 +77,13 @@ function Details({
     <div>
       <h1 className="text-2xl font-medium">Deploy variables</h1>
       <div className="mt-6 max-w-lg mx-auto">
-        {pgData.name && (
-          <p className="p-0 mb-1">
-            Project Name: {pgData.name} ({pgData.symbol})
-          </p>
-        )}
-        {pgData.name && <p className="p-0 mb-1">Total Supply: {pgData.totalSupply}</p>}
-        {pgData.decimal && <p className="p-0 mb-1">Token Decimal: {pgData.decimal}</p>}
-        {pgData.inflation && <p className="p-0 mb-1">Token Inflation Rate: {pgData.inflation}%</p>}
-        {pgData.baseURI && (
-          <p className="p-0 m-0">
-            Token BaseURI:{" "}
-            <a href={pgData.baseURI} target="_blank">
-              Click
-            </a>
-          </p>
-        )}
+        {pgData.name && <p className="p-0 mb-1">Stream Org Name: {pgData.name}</p>}
+        {pgData.name && <p className="p-0 mb-1">Stream Owner: {pgData.owner}</p>}
+
+        <Card
+          className="m-0 p-0 mx-auto block"
+          cover={<img src={pgData.preview} style={{ height: 300, objectFit: "cover", opacity: "80%" }} />}
+        ></Card>
         {/* {pgData.baseURI && (
           <div className="flex flex-1 flex-row mb-2">
             <div className="mr-2 flex flex-nowrap">Token BaseURI:</div>
