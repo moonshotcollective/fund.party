@@ -58,7 +58,7 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       <div className="flex justify-between">
         <p className="font-bold text-2xl m-0 mb-3">Public TokenStreams</p>
         <Button onClick={() => setShow(true)} type="primary" type="ghost">
-          Create Stream
+          Create Stream Manager
         </Button>
       </div>
       <div className="mb-6 flex">
