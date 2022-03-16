@@ -7,9 +7,9 @@ import { useRef } from "react";
 import { ethers } from "ethers";
 import { Address } from ".";
 import { AlignJustify } from "react-feather";
-import { NFTABI } from "../contracts/nftabi.js";
+import { StreamABI } from "../contracts/StreamABI.js";
 
-const abi = NFTABI;
+const abi = StreamABI;
 
 export default function PGCard({
   creator,

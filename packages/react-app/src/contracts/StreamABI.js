@@ -1,4 +1,4 @@
-export const NFTABI = [
+export const StreamABI = [
   {
     inputs: [
       {

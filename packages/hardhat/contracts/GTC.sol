@@ -3,6 +3,8 @@ pragma solidity >=0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+// This is just for testing on local / t-nets
+
 contract GTC is ERC20 {
     constructor(address admin) ERC20("GTC", "GTC") {
         _mint(admin, 1000 ether);

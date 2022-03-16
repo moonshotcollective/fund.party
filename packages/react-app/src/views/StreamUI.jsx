@@ -8,7 +8,7 @@ import { useParams, useLocation } from "react-router-dom";
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { Address, AddressInput, Balance, PayButton, QRPunkBlockie } from "../components";
 
-export default function ExampleUI({
+export default function StreamUI({
   SimpleStream,
   streamToAddress,
   streamfrequency,

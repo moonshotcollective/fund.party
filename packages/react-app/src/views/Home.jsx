@@ -6,7 +6,7 @@ import { useEventListener } from "eth-hooks/events/useEventListener";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { PlusOutlined } from "@ant-design/icons";
 import { PGCard } from "../components";
-import { NFTABI } from "../contracts/nftabi";
+import { StreamABI } from "../contracts/StreamABI";
 import { useDebounce } from "../hooks";
 
 const { Search } = Input;
@@ -30,7 +30,7 @@ function Home({ tx, writeContracts, address, readContracts, localProvider, cart,
       const goods = events.map(eventLog => ({ ...eventLog.args, name: "" }));
       console.log("gud", goods);
       for (const good of goods) {
-        const contract = new Contract(good.token, NFTABI, localProvider);
+        const contract = new Contract(good.token, StreamABI, localProvider);
         good.name = await contract.orgName();
         console.log("fetched good", good);
       }

@@ -3,7 +3,7 @@ import { Contract, ethers, utils } from "ethers";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 
-import { NFTABI } from "../contracts/nftabi.js";
+import { StreamABI } from "../contracts/StreamABI.js";
 
 import { useParams, Link } from "react-router-dom";
 
@@ -51,7 +51,7 @@ async function resolveStreamSummary(streamAddress, localProvider) {
   return data;
 }
 
-const ViewNFT = ({
+const ViewStream = ({
   loadWeb3Modal,
   tx,
   mainnetProvider,
@@ -82,8 +82,8 @@ const ViewNFT = ({
 
   const orgContract = useMemo(() => {
     if (!orgAddress) return null;
-    if (userSigner) return new Contract(orgAddress, NFTABI, userSigner);
-    return new Contract(orgAddress, NFTABI, localProvider);
+    if (userSigner) return new Contract(orgAddress, StreamABI, userSigner);
+    return new Contract(orgAddress, StreamABI, localProvider);
   }, [orgAddress, userSigner]);
 
   const fetchOrgInfo = async () => {
@@ -298,4 +298,4 @@ const ViewNFT = ({
   );
 };
 
-export default ViewNFT;
+export default ViewStream;

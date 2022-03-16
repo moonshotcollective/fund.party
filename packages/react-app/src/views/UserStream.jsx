@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useContractReader } from "eth-hooks";
 import { useExternalContractLoader, useEventListener } from "../hooks";
 import { Button } from "antd";
-import { ExampleUI } from ".";
+import { StreamUI } from ".";
 import { useParams } from "react-router-dom";
 import { SimpleStreamABI } from "../contracts/external_ABI";
 
@@ -46,7 +46,7 @@ function UserStream({ contractAddress, stream, provider, localProvider, readCont
   }, [SimpleStream.streamBalance]);
 
   return ready ? (
-    <ExampleUI
+    <StreamUI
       {...data}
       {...props}
       stream={contractAddress}
