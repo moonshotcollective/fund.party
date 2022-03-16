@@ -4,7 +4,7 @@ import axios from "axios";
 import { useContractReader } from "eth-hooks";
 import { ethers } from "ethers";
 import pretty from "pretty-time";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import { Address, AddressInput, Balance, PayButton, QRPunkBlockie } from "../components";
 
 export default function ExampleUI({
@@ -150,6 +150,10 @@ export default function ExampleUI({
     setDepositReason();
     setDepositAmount();
   };
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  });
 
   return (
     <div style={{ paddingBotton: "25px" }}>
