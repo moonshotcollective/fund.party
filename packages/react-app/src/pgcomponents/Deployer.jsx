@@ -62,6 +62,7 @@ function Details({
               " gwei",
           );
           setIsDeploying(false);
+          location.reload();
         }
       });
       console.log("awaiting metamask/web3 confirm result...", result);
